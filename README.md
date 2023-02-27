@@ -1,7 +1,7 @@
 # Insider Flutter Demo
 
 <p align="center">
-  <img src="assets/insider-logo-read-me.jpg">
+  <img src="assets/images/insider-logo-read-me.jpg">
 
   <table align="center">
     <tr>
@@ -21,7 +21,7 @@ This Demo contains simple methods that you can use with the Insider SDK.
 <table align="center">
   <tbody>
     <tr>
-      <td><img src="assets/preview.gif" width="250"></td>
+      <td><img src="assets/images/preview.gif" width="250"></td>
     </tr>
   </tbody>
 </table>
