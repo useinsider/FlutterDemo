@@ -33,11 +33,15 @@ Install all npm packages by running the `dart pub get` command in the home direc
 
 Replace partner name and app group value in `main.dart` with your info.
 
+Run the `flutterfire configure --project={project}` command for your Firebase configuration.
+
 Note: Can easily find the warnings added as comments by searching the `FIXME-INSIDER` key in the project and you can quickly make the necessary arrangements for the project.
+
+Note: You Can see the detailed usage of the methods used with the integration with Firebase by examining the `main.dart`, `App.tsx`, and `ios/Runner/AppDelegate.swift` files.
 
 ### Android
 
-1. Add `google-services.json` and `agconnect-services.json` to `android/app` folder.
+1. Add `agconnect-services.json` to `android/app` folder.
 2. Add your keystore file to `android/app` folder and replace `signingConfigs` attributes in `android/app/build.gradle` file with your info.
 3. Replace manifestPlaceholders -> partner value with your partner name in `android/app/build.gradle` file. (This step is important to add test device with QR or Email in the panel.)
 4. And run project with `flutter run` command.

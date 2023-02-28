@@ -17,44 +17,96 @@ import 'package:flutter_demo/insider/ContentOptimizer.dart';
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (message.data['source'] == 'Insider') {
+    FlutterInsider.Instance.handleNotification(
+        <String, dynamic> {
+          "data": message.data
+        }
+    );
+  }
+
+  print('[FCM][onBackgroundMessage]: ${message.data}');
+}
+
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(const InsiderDemo());
 }
+
+Future initInsider() async {
+  // FIXME-INSIDER: Please change with your partner name and app group.
+  await FlutterInsider.Instance.init(
+      "your_partner_name", "group.com.useinsider.FlutterDemo",
+          (int type, dynamic data) {
+        switch (type) {
+          case InsiderCallbackAction.NOTIFICATION_OPEN:
+            print('[INSIDER][NOTIFICATION_OPEN]: $data');
+            break;
+          case InsiderCallbackAction.TEMP_STORE_CUSTOM_ACTION:
+            print('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
+            break;
+          default:
+            print("[INSIDER][InsiderCallbackAction]: Unregistered Action!");
+            break;
+        }
+      });
+
+  // This is an utility method, if you want to handle the push permission in iOS own your own you can omit the following method.
+  FlutterInsider.Instance.setActiveForegroundPushView();
+  FlutterInsider.Instance.registerWithQuietPermission(false);
+  FlutterInsider.Instance.enableIDFACollection(true);
+  FlutterInsider.Instance.enableIpCollection(true);
+  FlutterInsider.Instance.enableCarrierCollection(true);
+  FlutterInsider.Instance.enableLocationCollection(true);
+  FlutterInsider.Instance.startTrackingGeofence();
+}
+
+Future initFirebase() async {
+  FirebaseMessaging.instance
+      .getToken().then((token) {
+    print('[FCM][Token]: $token');
+  });
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.data['source'] == 'Insider') {
+      FlutterInsider.Instance.handleNotification(
+          <String, dynamic> {
+            "data": message.data
+          }
+      );
+    }
+
+    print('[FCM][onMessage]: ${message.data}');
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('[FCM][onMessageOpenedApp]: ${message.data}');
+  });
+}
+
 class InsiderDemo extends StatelessWidget {
   const InsiderDemo({Key? key}) : super(key: key);
 
-  Future initInsider() async {
-    // FIXME-INSIDER: Please change with your partner name and app group.
-    await FlutterInsider.Instance.init(
-        "your_partner_name", "group.com.useinsider.FlutterDemo",
-            (int type, dynamic data) {
-          switch (type) {
-            case InsiderCallbackAction.NOTIFICATION_OPEN:
-              print('[INSIDER][NOTIFICATION_OPEN]: $data');
-              break;
-            case InsiderCallbackAction.TEMP_STORE_CUSTOM_ACTION:
-              print('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
-              break;
-            default:
-              print("[INSIDER][InsiderCallbackAction]: Unregistered Action!");
-              break;
-          }
-        });
-
-    // This is an utility method, if you want to handle the push permission in iOS own your own you can omit the following method.
-    FlutterInsider.Instance.setActiveForegroundPushView();
-    FlutterInsider.Instance.registerWithQuietPermission(false);
-    FlutterInsider.Instance.enableIDFACollection(true);
-    FlutterInsider.Instance.enableIpCollection(true);
-    FlutterInsider.Instance.enableCarrierCollection(true);
-    FlutterInsider.Instance.enableLocationCollection(true);
-    FlutterInsider.Instance.startTrackingGeofence();
-  }
-
   @override
   Widget build(BuildContext context) {
-    initInsider();
-
     return const MaterialApp(
       title: 'Flutter Demo',
       home: HomePage(title: '[Flutter] Insider SDK Demo'),
@@ -71,6 +123,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    initInsider();
+    initFirebase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
