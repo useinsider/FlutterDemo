@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import UserNotifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,7 +10,7 @@ import Flutter
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
       
-      UNUserNotificationCenter.current().delegate = self;
+    UNUserNotificationCenter.current().delegate = NotificationManager.shared()
       
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

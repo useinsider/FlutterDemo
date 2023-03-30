@@ -37,7 +37,7 @@ Run the `flutterfire configure --project={project}` command for your Firebase co
 
 Note: Can easily find the warnings added as comments by searching the `FIXME-INSIDER` key in the project and you can quickly make the necessary arrangements for the project.
 
-Note: You Can see the detailed usage of the methods used with the integration with Firebase by examining the `main.dart`, `App.tsx`, and `ios/Runner/AppDelegate.swift` files.
+Note: You Can see the detailed usage of the methods used with the integration with Firebase by examining the `main.dart`, `ios/Runner/NotificationManager.h/m`, and `ios/Runner/AppDelegate.swift` files.
 
 ### Android
 

@@ -16,6 +16,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		D43B7DBF29D6508F00CBC6AA /* NotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D43B7DBE29D6508F00CBC6AA /* NotificationManager.m */; };
 		D4DB3BFE29ACC93E001FE6DC /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DB3BFD29ACC93E001FE6DC /* UserNotifications.framework */; };
 		D4DB3C0029ACC93E001FE6DC /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DB3BFF29ACC93E001FE6DC /* UserNotificationsUI.framework */; };
 		D4DB3C0429ACC93E001FE6DC /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB3C0329ACC93E001FE6DC /* NotificationViewController.m */; };
@@ -90,6 +91,8 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF4FA3D7BF80F12CD1244B3B /* Pods-InsiderNotificationContent.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InsiderNotificationContent.debug.xcconfig"; path = "Target Support Files/Pods-InsiderNotificationContent/Pods-InsiderNotificationContent.debug.xcconfig"; sourceTree = "<group>"; };
 		C418C7A9CFEA40B4D8BBD9C4 /* Pods-InsiderNotificationContent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InsiderNotificationContent.release.xcconfig"; path = "Target Support Files/Pods-InsiderNotificationContent/Pods-InsiderNotificationContent.release.xcconfig"; sourceTree = "<group>"; };
+		D43B7DBD29D6508F00CBC6AA /* NotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationManager.h; sourceTree = "<group>"; };
+		D43B7DBE29D6508F00CBC6AA /* NotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationManager.m; sourceTree = "<group>"; };
 		D4DB3BFC29ACC93E001FE6DC /* InsiderNotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InsiderNotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DB3BFD29ACC93E001FE6DC /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		D4DB3BFF29ACC93E001FE6DC /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
@@ -204,6 +207,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				D43B7DBD29D6508F00CBC6AA /* NotificationManager.h */,
+				D43B7DBE29D6508F00CBC6AA /* NotificationManager.m */,
 				D4DB3C2229ACC993001FE6DC /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -549,6 +554,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D43B7DBF29D6508F00CBC6AA /* NotificationManager.m in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
