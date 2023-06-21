@@ -31,5 +31,24 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
+
+       <activity
+           android:name="com.useinsider.insider.InsiderLoginActivity"
+           android:taskAffinity=""
+           android:exported="true"
+           android:noHistory="true"
+           android:theme="@android:style/Theme.Translucent.NoTitleBar">
+           <intent-filter>
+               <action android:name="android.intent.action.VIEW" />
+
+               <category android:name="android.intent.category.DEFAULT" />
+               <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- FIXME-INSIDER: Please edit this part according to your partner names. -->
+               <data android:scheme="partner_name_1" />
+               <data android:scheme="partner_name_2" />
+           </intent-filter>
+       </activity>
+
+   </application>
 </manifest>

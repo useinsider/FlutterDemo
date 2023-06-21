@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 import 'package:flutter_demo/components/CustomTitle.dart';
 
@@ -32,6 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 
   if (message.data['source'] == 'Insider') {
+    // In this step, you should forward the push data to the Insider SDK.
     FlutterInsider.Instance.handleNotification(
         <String, dynamic> {
           "data": message.data
@@ -51,10 +53,37 @@ Future<void> main() async {
   runApp(const InsiderDemo());
 }
 
+String getCurrentLocale() {
+  String languageCode = window.locale.languageCode;
+
+  return languageCode;
+}
+
+String getInsiderPanelName() {
+  String languageCode = getCurrentLocale();
+
+  print('[INSIDER][currentLanguage]: $languageCode');
+
+  // Ex: samsungappseguat , samsungappsegprod, samsungappsebnuat, samsungappsebnprod, etc.
+  switch (languageCode) {
+    case 'tr':
+      return 'partner_name_1';
+    case 'en':
+      return 'partner_name_2';
+    default:
+      return 'partner_name_default';
+  }
+}
+
 Future initInsider() async {
+  /* NOTE: Dynamically set the partner name here according to your application structure.
+   * In this demo, the partner name is handled depending on the device language.
+   */
+  String panelName = getInsiderPanelName();
+
   // FIXME-INSIDER: Please change with your partner name and app group.
   await FlutterInsider.Instance.init(
-      "your_partner_name", "group.com.useinsider.FlutterDemo",
+      panelName, "group.com.useinsider.FlutterDemo",
           (int type, dynamic data) {
         switch (type) {
           case InsiderCallbackAction.NOTIFICATION_OPEN:
@@ -80,13 +109,13 @@ Future initInsider() async {
 }
 
 Future initFirebase() async {
-  FirebaseMessaging.instance
-      .getToken().then((token) {
+  FirebaseMessaging.instance.getToken().then((token) {
     print('[FCM][Token]: $token');
   });
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.data['source'] == 'Insider') {
+      // In this step, you should forward the push data to the Insider SDK.
       FlutterInsider.Instance.handleNotification(
           <String, dynamic> {
             "data": message.data

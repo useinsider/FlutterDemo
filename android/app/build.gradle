@@ -52,7 +52,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         // FIXME-INSIDER: Please change with your partner name.
-        manifestPlaceholders = [ 'partner': 'your_partner_name' ]
+        manifestPlaceholders = [ 'partner': 'partner_name_default' ]
     }
 
     signingConfigs {

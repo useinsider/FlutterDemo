@@ -31,7 +31,15 @@
 			<string>insider</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>insider{your_partner_name}</string>
+				<string>insiderpartnername1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>insiderpartnername2</string>
 			</array>
 		</dict>
 	</array>
