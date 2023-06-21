@@ -70,7 +70,7 @@ To handle multiple panels in one app, some adjustments are required.
 * When initializing the Insider SDK, the partner name defined as a parameter inside the initialize function should be defined with a dynamic variable. The Insider SDK must be initialized again after this variable has been updated according to the app status (Example: country selection).
     - Repeated initialization operations in the same session are invalid. The SDK works with the first initialized partner name. For stable operation of the next initialization process, it must be initialized after the app is killed and reopened.
 
-Example: https://github.com/useinsider/FlutterDemo/blob/8f13f3061260863950864f595c427e2f434d1eac/lib/main.dart#L56-L82
+Example: https://github.com/useinsider/FlutterDemo/blob/a57ba7d514e3643f9e6237dbddc10da1206d6d62/lib/main.dart#L56-L82
 
 #### iOS
 
