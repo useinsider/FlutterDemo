@@ -1,4 +1,4 @@
-# Insider Flutter Demo
+# Insider Flutter Demo (Multiple Panel Handling)
 
 <p align="center">
   <img src="assets/images/insider-logo-read-me.jpg">
