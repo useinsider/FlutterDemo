@@ -64,7 +64,7 @@ String getInsiderPanelName() {
 
   print('[INSIDER][currentLanguage]: $languageCode');
 
-  // Ex: samsungappseguat , samsungappsegprod, samsungappsebnuat, samsungappsebnprod, etc.
+  // Ex: partner_name_1 , partner_name_2, partner_name_3, partner_name_4, etc.
   switch (languageCode) {
     case 'tr':
       return 'partner_name_1';
