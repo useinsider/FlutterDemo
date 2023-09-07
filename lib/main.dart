@@ -9,6 +9,7 @@ import 'package:flutter_demo/insider/MessageCenter.dart';
 import 'package:flutter_demo/insider/PageVisit.dart';
 import 'package:flutter_demo/insider/Product.dart';
 import 'package:flutter_demo/insider/Purchase.dart';
+import 'package:flutter_demo/insider/Reinit.dart';
 import 'package:flutter_demo/insider/SmartRecommender.dart';
 import 'package:flutter_demo/insider/SocialProof.dart';
 import 'package:flutter_demo/insider/UserAttribute.dart';
@@ -59,31 +60,13 @@ String getCurrentLocale() {
   return languageCode;
 }
 
-String getInsiderPanelName() {
-  String languageCode = getCurrentLocale();
-
-  print('[INSIDER][currentLanguage]: $languageCode');
-
-  // Ex: partner_name_1 , partner_name_2, partner_name_3, partner_name_4, etc.
-  switch (languageCode) {
-    case 'tr':
-      return 'partner_name_1';
-    case 'en':
-      return 'partner_name_2';
-    default:
-      return 'partner_name_default';
-  }
-}
-
-Future initInsider() async {
+Future initInsider(String partnerName) async {
   /* NOTE: Dynamically set the partner name here according to your application structure.
    * In this demo, the partner name is handled depending on the device language.
    */
-  String panelName = getInsiderPanelName();
-
   // FIXME-INSIDER: Please change with your partner name and app group.
   await FlutterInsider.Instance.init(
-      panelName, "group.com.useinsider.FlutterDemo",
+      partnerName, "group.com.useinsider.FlutterDemo",
           (int type, dynamic data) {
         switch (type) {
           case InsiderCallbackAction.NOTIFICATION_OPEN:
@@ -152,11 +135,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String partnerName = "your_default_partner_name";
+
   @override
   void initState() {
     super.initState();
 
-    initInsider();
+    initInsider(partnerName);
     initFirebase();
   }
 
@@ -196,6 +181,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+                CustomTitle(title: 'Reinit'),
+                Reinit(partnerName),
                 CustomTitle(title: 'User Attributes'),
                 UserAttribute(),
                 CustomTitle(title: 'User Identifiers'),
