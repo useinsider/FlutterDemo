@@ -23,6 +23,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -135,13 +137,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String partnerName = "your_default_partner_name";
+  String defaultPartnerName = "orkunbites";
 
   @override
   void initState() {
     super.initState();
 
-    initInsider(partnerName);
+    initialize();
+  }
+
+  void initialize() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getString("insider_partner_name") != null) {
+      defaultPartnerName = prefs.getString("insider_partner_name") ?? defaultPartnerName;
+    } else {
+      prefs.setString("insider_partner_name", defaultPartnerName);
+    }
+
+    initInsider(defaultPartnerName);
     initFirebase();
   }
 
@@ -182,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 CustomTitle(title: 'Reinit'),
-                Reinit(partnerName),
+                Reinit(defaultPartnerName),
                 CustomTitle(title: 'User Attributes'),
                 UserAttribute(),
                 CustomTitle(title: 'User Identifiers'),
