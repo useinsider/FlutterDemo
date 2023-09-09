@@ -77,7 +77,7 @@ String getInsiderPanelName() {
 
 Future initInsider() async {
   /* NOTE: Dynamically set the partner name here according to your application structure.
-   * In this demo, the partner name is handled depending on the device language.
+   * In this demo, the partner name is handled depending on the stored partner name.
    */
   String panelName = getInsiderPanelName();
 
