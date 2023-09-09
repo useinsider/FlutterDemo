@@ -71,6 +71,8 @@ To handle multiple panels in one app, some adjustments are required.
 
 Example: https://github.com/useinsider/FlutterDemo/blob/60ed838c3b413ff33cbe97a13068bcb3ad28eb50/lib/main.dart#L149-L160
 
+https://github.com/useinsider/FlutterDemo/blob/2a1fcbf01a82c0bf8351dac16fec493d9b8ff0d2/lib/main.dart#L65-L84
+
 * If you want to switch to a different partner within the same session. You can use the `FlutterInsider.Instance.reinitWithPartnerName(String newPartnerName)` method.
 
 Example: https://github.com/useinsider/FlutterDemo/blob/60ed838c3b413ff33cbe97a13068bcb3ad28eb50/lib/insider/Reinit.dart#L26-L32
