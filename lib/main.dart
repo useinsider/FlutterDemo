@@ -137,7 +137,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String defaultPartnerName = "orkunbites";
+  String defaultPartnerName = "your_default_partner_name";
 
   @override
   void initState() {
