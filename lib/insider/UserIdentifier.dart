@@ -29,7 +29,7 @@ class UserIdentifier extends StatelessWidget {
                   identifiers.addUserID("{crmID}");
 
                   // Login
-                  await currentUser.login(identifiers);
+                  currentUser.login(identifiers);
 
                   print('[INSIDER][login]: Method is triggered.');
                 }),
@@ -47,7 +47,7 @@ class UserIdentifier extends StatelessWidget {
                     FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
 
                     // Logout
-                    await currentUser.logout();
+                    currentUser.logout();
 
                     print('[INSIDER][logout]: Method is triggered.');
               }),
