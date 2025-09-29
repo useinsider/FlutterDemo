@@ -1,15 +1,24 @@
 name: Security AllInOne
-on: 
+on:
   push:
     branches:
-      - feature/*
+      - develop
+      - master
+      - release/*
   pull_request:
+    branches:
+      - develop
+      - master
+      - feature/*
+      - release/*
     types:
       - opened
-      - closed
       - ready_for_review
+      - synchronize
+      - reopened
 jobs:
   build:
+    name: Security Check
     runs-on:
       group: default
       labels: self-hosted

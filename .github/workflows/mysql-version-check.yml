@@ -1,12 +1,18 @@
 name: Block MySQL 5.x Usage
+
 on:
   pull_request:
     branches:
       - develop
+
 jobs:
   mysql-check:
     runs-on:
       labels: self-hosted
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
     steps:
       - name: Create GitHub App token
         id: github-app-token
@@ -14,8 +20,13 @@ jobs:
         with:
           app-id: ${{ secrets.InsiderActionsApplication_APP_ID }}
           private-key: ${{ secrets.InsiderActionsApplication_PRIVATE_KEY }}
-      - name: Checkout code
+
+      - name: Checkout to Branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.github-app-token.outputs.token }}
+
       - name: Check for MySQL 5.x
         run: |
           echo "Scanning for MySQL 5.x usage..."
