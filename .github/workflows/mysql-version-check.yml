@@ -9,10 +9,23 @@ jobs:
   mysql-check:
     runs-on:
       labels: self-hosted
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
 
     steps:
-      - name: Checkout code
+      - name: Create GitHub App token
+        id: github-app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.InsiderActionsApplication_APP_ID }}
+          private-key: ${{ secrets.InsiderActionsApplication_PRIVATE_KEY }}
+
+      - name: Checkout to Branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.github-app-token.outputs.token }}
 
       - name: Check for MySQL 5.x
         run: |
