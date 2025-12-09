@@ -43,7 +43,6 @@ android {
     defaultConfig {
         // FIXME-INSIDER: Please change with your application ID.
         applicationId "com.useinsider.flutterdemo"
-        // You can update the following values to match your application needs.
         minSdk 24
         targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
