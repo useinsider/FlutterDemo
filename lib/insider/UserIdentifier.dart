@@ -54,6 +54,32 @@ class UserIdentifier extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: CustomButton(buttonText: 'Logout Resetting Insider ID',
+                    backgroundColor: const Color.fromRGBO(229, 127, 116, 1),
+                    onPressed: () async {
+                    FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
+                    FlutterInsiderIdentifiers identifiers = new FlutterInsiderIdentifiers();
+
+                    identifiers.addEmail("mobile.test@useinsider.com");
+                    identifiers.addPhoneNumber("+909876543210");
+                    identifiers.addUserID("{crmID}");
+
+                    List<FlutterInsiderIdentifiers> additionalIdentifiers = [identifiers];
+
+                    // Logout Resetting Insider ID with Identifiers
+                    currentUser.logoutResettingInsiderID(additionalIdentifiers);
+
+                    print('[INSIDER][logoutResettingInsiderID]: Method is triggered.');
+              }),
+              ),
+            ],
+          ),
         ],
       );
   }

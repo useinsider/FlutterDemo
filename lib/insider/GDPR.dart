@@ -32,6 +32,20 @@ class GDPR extends StatelessWidget {
             )
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Set Mobile App Access', onPressed: () {
+                FlutterInsider.Instance.setMobileAppAccess(true);
+
+                print('[INSIDER][setMobileAppAccess]: Method is triggered.');
+              }),
+            ),
+          ],
+        ),
       ],
     );
   }

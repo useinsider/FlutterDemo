@@ -64,6 +64,32 @@ class Wishlist extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Visit Wishlist Page',
+                  onPressed: () {
+                    // --- VISIT WISHLIST PAGE --- //
+                    FlutterInsiderProduct product1 =
+                      FlutterInsider.Instance.createNewProduct("productID1", "productName1",
+                          taxonomy, "imageURL1", 100.0, "currency");
+
+                    FlutterInsiderProduct product2 =
+                      FlutterInsider.Instance.createNewProduct("productID2", "productName2",
+                          taxonomy, "imageURL2", 200.0, "currency");
+
+                    List<FlutterInsiderProduct> products = [product1, product2];
+
+                    FlutterInsider.Instance.visitWishlistPage(products);
+
+                    print('[INSIDER][visitWishlistPage]: Method is triggered.');
+              }),
+            ),
+          ],
+        ),
       ],
     );
   }
