@@ -36,6 +36,9 @@ class UserAttribute extends StatelessWidget {
                 currentUser.setLanguage("TR");
                 currentUser.setLocale("tr_TR");
 
+                // Custom Attributes
+                currentUser.setCustomAttributeWithBoolean("mobile_app_access", true);
+
                 print('[INSIDER][getCurrentUser]: Method is triggered.');
               }),
             ),
