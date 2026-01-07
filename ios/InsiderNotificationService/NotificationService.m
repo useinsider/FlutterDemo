@@ -21,7 +21,7 @@ static NSString *APP_GROUP = @"group.com.useinsider.FlutterDemo";
     NSString *nextButtonText = @">>";
     NSString *goToAppText = @"Launch App";
     
-    [InsiderPushNotification showInsiderRichPush:request appGroup:APP_GROUP nextButtonText:nextButtonText goToAppText:goToAppText success:^(UNNotificationAttachment *attachment) {
+    [InsiderPushNotification showInsiderRichPush:self.bestAttemptContent appGroup:APP_GROUP nextButtonText:nextButtonText goToAppText:goToAppText success:^(UNNotificationAttachment *attachment) {
         if (attachment) {
             self.bestAttemptContent.attachments = [NSArray arrayWithObject:attachment];
         }

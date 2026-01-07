@@ -45,6 +45,27 @@ class ContentOptimizer extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Get Variable Without Cache',
+                  onPressed: () async {
+                    // --- CONTENT OPTIMIZER WITHOUT CACHE --- //
+
+                    var contentOptimizerString =
+                        await FlutterInsider.Instance.getContentStringWithoutCache(
+                        "variableName",
+                        "defaultValue",
+                        ContentOptimizerDataType.ELEMENT);
+
+                    print('[INSIDER][getContentStringWithoutCache]: $contentOptimizerString');
+              }),
+            ),
+          ],
+        ),
       ],
     );
   }

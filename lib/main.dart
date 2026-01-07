@@ -9,10 +9,12 @@ import 'package:flutter_demo/insider/PageVisit.dart';
 import 'package:flutter_demo/insider/Product.dart';
 import 'package:flutter_demo/insider/Purchase.dart';
 import 'package:flutter_demo/insider/SmartRecommender.dart';
-import 'package:flutter_demo/insider/SocialProof.dart';
 import 'package:flutter_demo/insider/UserAttribute.dart';
 import 'package:flutter_demo/insider/UserIdentifier.dart';
 import 'package:flutter_demo/insider/ContentOptimizer.dart';
+import 'package:flutter_demo/insider/Geofence.dart';
+import 'package:flutter_demo/insider/InAppMessages.dart';
+import 'package:flutter_demo/insider/Wishlist.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
@@ -74,16 +76,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'assets/images/insider-logo.png',
-              fit: BoxFit.none,
-              width: double.infinity,
-              height: 200,
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Image.asset(
+                  'assets/images/insider-one.png',
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: 150,
+                ),
+              ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -119,8 +125,6 @@ class _HomePageState extends State<HomePage> {
                 Purchase(),
                 CustomTitle(title: 'Smart Recommender'),
                 SmartRecommender(),
-                CustomTitle(title: 'Social Proof'),
-                SocialProof(),
                 CustomTitle(title: 'Page Visit Methods'),
                 PageVisit(),
                 CustomTitle(title: 'GDPR'),
@@ -129,9 +133,16 @@ class _HomePageState extends State<HomePage> {
                 MessageCenter(),
                 CustomTitle(title: 'Content Optimizer'),
                 ContentOptimizer(),
+                CustomTitle(title: 'Geofence'),
+                Geofence(),
+                CustomTitle(title: 'In-App Messages'),
+                InAppMessages(),
+                CustomTitle(title: 'Wishlist'),
+                Wishlist(),
               ],
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
