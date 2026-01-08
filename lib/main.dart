@@ -22,6 +22,7 @@ import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
 Future<void> main() async {
   runApp(const InsiderDemo());
 }
+
 class InsiderDemo extends StatelessWidget {
   const InsiderDemo({Key? key}) : super(key: key);
 
@@ -101,9 +102,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         '[Flutter] Insider SDK Demo',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24
-                        ),
+                            fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -148,4 +147,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

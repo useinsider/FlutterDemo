@@ -9,7 +9,7 @@
 			<key>UNNotificationExtensionCategory</key>
 			<string>insider_int_push</string>
 			<key>UNNotificationExtensionDefaultContentHidden</key>
-			<string>YES</string>
+			<true/>
 			<key>UNNotificationExtensionInitialContentSizeRatio</key>
 			<real>0.5</real>
 		</dict>

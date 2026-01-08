@@ -1,0 +1,12 @@
+//
+//  Version.xcconfig
+//  Runner
+//
+//  Created by Özgür Vatansever on 8.01.2026.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+MARKETING_VERSION = 1.0.0
+CURRENT_PROJECT_VERSION = 1
