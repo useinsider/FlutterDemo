@@ -6,8 +6,8 @@
 //
 
 import Flutter
-import UIKit
 import InsiderMobile
+import UIKit
 
 public final class SceneDelegate: FlutterSceneDelegate {
 

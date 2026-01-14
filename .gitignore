@@ -54,3 +54,5 @@ pubspec.lock
 
 /ios/Pods
 /ios/Podfile.lock
+
+.claude/settings.local.json

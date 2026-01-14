@@ -5,8 +5,8 @@
 //  Created by Insider on 8.01.2026.
 //
 
-import UIKit
 import Flutter
+import UIKit
 
 @main @objc public final class AppDelegate: FlutterAppDelegate, @MainActor FlutterImplicitEngineDelegate {
 
