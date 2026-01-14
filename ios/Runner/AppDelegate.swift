@@ -8,7 +8,7 @@
 import Flutter
 import UIKit
 
-@main @objc public final class AppDelegate: FlutterAppDelegate, @MainActor FlutterImplicitEngineDelegate {
+@main @objc public final class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
 
     public override func application(
         _ application: UIApplication,
