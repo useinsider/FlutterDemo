@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.useinsider.flutterdemo"
-    compileSdk 34
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
