@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/components/CustomButton.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
+import 'package:flutter_insider/src/identifiers.dart';
 
 class MessageCenter extends StatelessWidget {
   MessageCenter();
@@ -26,6 +27,31 @@ class MessageCenter extends StatelessWidget {
                     await FlutterInsider.Instance.getMessageCenterData(startDate, endDate, 100);
 
                 print('[INSIDER][getMessageCenterData]: $messageCenterData');
+              }),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Get Message Center Data With Identifiers', onPressed: () async {
+                // --- MESSAGE CENTER WITH IDENTIFIERS --- //
+                DateTime startDate = DateTime.now().subtract(const Duration(days: 90));
+                DateTime endDate = DateTime.now().add(const Duration(days: 90));
+
+                FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers()
+                    .addEmail("test@example.com")
+                    .addPhoneNumber("+1234567890")
+                    .addUserID("user123");
+
+                print('[INSIDER][getMessageCenterDataWithIdentifiers]: Method is triggered , waiting response.');
+
+                List? messageCenterData =
+                    await FlutterInsider.Instance.getMessageCenterDataWithIdentifiers(startDate, endDate, identifiers, 100);
+
+                print('[INSIDER][getMessageCenterDataWithIdentifiers]: $messageCenterData');
               }),
             ),
           ],
