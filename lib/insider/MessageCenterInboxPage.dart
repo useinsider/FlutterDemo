@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_insider/flutter_insider.dart';
-import 'package:flutter_insider/src/app_cards_models.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AppCardsPage extends StatefulWidget {
   const AppCardsPage({Key? key}) : super(key: key);
@@ -32,6 +30,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
       print('[INSIDER][AppCards]: Loading campaigns...');
 
       final response = await FlutterInsider.Instance.appCards.getCampaigns();
+      if (!mounted) return;
 
       if (response != null && response.appCards.isNotEmpty) {
         print('[INSIDER][AppCards]: Received ${response.appCards.length} cards');
@@ -48,6 +47,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
       }
     } catch (e) {
       print('[INSIDER][AppCards]: Error loading cards: $e');
+      if (!mounted) return;
       setState(() {
         hasError = true;
         errorMessage = 'Error loading cards: $e';
