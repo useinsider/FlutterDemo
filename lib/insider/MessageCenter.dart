@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/insider/MessageCenterInboxPage.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
-import 'package:flutter_insider/src/identifiers.dart';
 
 class MessageCenter extends StatelessWidget {
   MessageCenter();
@@ -16,42 +16,48 @@ class MessageCenter extends StatelessWidget {
           children: <Widget>[
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
-              child: CustomButton(buttonText: 'Get Message Center Data', onPressed: () async {
-                // --- MESSAGE CENTER --- //
-                DateTime startDate = DateTime.now().subtract(const Duration(days: 90));
-                DateTime endDate = DateTime.now().add(const Duration(days: 90));
-
-                print('[INSIDER][getMessageCenterData]: Method is triggered , waiting response.');
-
-                List? messageCenterData =
-                    await FlutterInsider.Instance.getMessageCenterData(startDate, endDate, 100);
-
-                print('[INSIDER][getMessageCenterData]: $messageCenterData');
-              }),
+              child: CustomButton(
+                buttonText: 'Open App Cards',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AppCardsPage(),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
-              child: CustomButton(buttonText: 'Get Message Center Data With Identifiers', onPressed: () async {
-                // --- MESSAGE CENTER WITH IDENTIFIERS --- //
-                DateTime startDate = DateTime.now().subtract(const Duration(days: 90));
-                DateTime endDate = DateTime.now().add(const Duration(days: 90));
+              child: CustomButton(buttonText: 'Get Campaigns Data (Console)', onPressed: () async {
+                print('[INSIDER][getCampaigns]: Method is triggered, waiting response...');
 
-                FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers()
-                    .addEmail("test@example.com")
-                    .addPhoneNumber("+1234567890")
-                    .addUserID("user123");
+                try {
+                  final response = await FlutterInsider.Instance.appCards.getCampaigns();
 
-                print('[INSIDER][getMessageCenterDataWithIdentifiers]: Method is triggered , waiting response.');
-
-                List? messageCenterData =
-                    await FlutterInsider.Instance.getMessageCenterDataWithIdentifiers(startDate, endDate, identifiers, 100);
-
-                print('[INSIDER][getMessageCenterDataWithIdentifiers]: $messageCenterData');
+                  if (response != null) {
+                    print('[INSIDER][getCampaigns]: Received ${response.appCards.length} app cards');
+                    for (var card in response.appCards) {
+                      print('  - Card ID: ${card.id}');
+                      print('    Title: ${card.content?.title ?? "N/A"}');
+                      print('    Description: ${card.content?.description ?? "N/A"}');
+                      print('    Read: ${card.isRead}');
+                      print('    Images: ${card.images?.length ?? 0}');
+                      print('    Buttons: ${card.buttons?.length ?? 0}');
+                    }
+                  } else {
+                    print('[INSIDER][getCampaigns]: No campaigns data received');
+                  }
+                } catch (e) {
+                  print('[INSIDER][getCampaigns]: Error: $e');
+                }
               }),
             ),
           ],

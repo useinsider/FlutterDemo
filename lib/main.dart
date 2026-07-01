@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                 PageVisit(),
                 CustomTitle(title: 'GDPR'),
                 GDPR(),
-                CustomTitle(title: 'Message Center'),
+                CustomTitle(title: 'App Cards'),
                 MessageCenter(),
                 CustomTitle(title: 'Content Optimizer'),
                 ContentOptimizer(),

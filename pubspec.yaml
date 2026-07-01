@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_insider: 4.0.7
+  flutter_insider: 5.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
