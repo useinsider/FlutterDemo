@@ -9,7 +9,7 @@ public final class NotificationService: UNNotificationServiceExtension {
     nonisolated(unsafe) private var bestAttemptContent: UNMutableNotificationContent?
 
     // FIXME-INSIDER: Please change with your app group.
-    private let appGroup = "group.com.useinsider.FlutterDemo"
+    private let appGroup = "group.com.useinsider.mobile-ios"
 
     public override func didReceive(
         _ request: UNNotificationRequest,

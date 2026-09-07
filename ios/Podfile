@@ -1,7 +1,5 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '14.0'
+platform :ios, '15.6'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -40,13 +38,11 @@ end
 target 'InsiderNotificationContent' do
   use_frameworks!
   inherit! :search_paths
-  # Pods for InsiderNotificationContent
   pod "InsiderMobileAdvancedNotification", "2.4.0"
 end
 
 target 'InsiderNotificationService' do
   use_frameworks!
   inherit! :search_paths
-  # Pods for InsiderNotificationService
   pod "InsiderMobileAdvancedNotification", "2.4.0"
 end

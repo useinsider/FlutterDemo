@@ -13,7 +13,7 @@ public final class NotificationViewController: UIViewController, UNNotificationC
     @IBOutlet public var carousel: iCarousel!
 
     // FIXME-INSIDER: Please change with your app group.
-    private let appGroup = "group.com.useinsider.FlutterDemo"
+    private let appGroup = "group.com.useinsider.mobile-ios"
 
     public override func viewDidLoad() {
         super.viewDidLoad()

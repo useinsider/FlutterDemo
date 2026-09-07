@@ -42,7 +42,7 @@ android {
 
     defaultConfig {
         // FIXME-INSIDER: Please change with your application ID.
-        applicationId "com.useinsider.flutterdemo"
+        applicationId "com.useinsider.ecommerce"
         minSdk 24
         targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -54,8 +54,8 @@ android {
     signingConfigs {
         // FIXME-INSIDER: Please change with your key store information.
         release {
-            storeFile file('debug.jks')
-            keyAlias 'test'
+            storeFile file('insider.jks')
+            keyAlias 'insider'
             keyPassword '123456'
             storePassword '123456'
             v1SigningEnabled true
@@ -80,10 +80,6 @@ android {
 
 flutter {
     source '../..'
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24"
 }
 
 apply plugin: 'com.google.gms.google-services'
