@@ -44,7 +44,7 @@ Note: Can easily find the warnings added as comments by searching the `FIXME-INS
 
 ### iOS
 
-`flutter_insider` ships on iOS through both Swift Package Manager and CocoaPods. Until the SwiftPM-capable release is on pub.dev, `pubspec.yaml` resolves the plugin from a pinned commit of the `feature/MOB-29522` branch.
+`flutter_insider` ships on iOS through both Swift Package Manager and CocoaPods. Until the SwiftPM-capable release is on pub.dev, `pubspec.yaml` resolves the plugin from a pinned commit of the plugin repository.
 
 1. Pick one dependency channel:
    - **Swift Package Manager** (Flutter 3.24+): run `flutter config --enable-swift-package-manager`, then `flutter pub get`. The notification extensions (`InsiderNotificationContent`, `InsiderNotificationService`) still come from CocoaPods, so `flutter build ios` also runs `pod install` for them. That is the expected hybrid setup, not a fallback.

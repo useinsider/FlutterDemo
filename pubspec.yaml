@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # TODO(MOB-29522): switch back to the pub.dev pin once the SwiftPM release ships.
+  # TODO: switch back to the pub.dev pin once the SwiftPM-capable release ships.
   flutter_insider:
     git:
       url: https://github.com/useinsider/flutter-insider.git
