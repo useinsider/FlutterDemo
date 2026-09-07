@@ -13,7 +13,12 @@
   <a href="LICENSE">MIT License</a>
 </p>
 
-This project demonstrates how to integrate the [Insider Flutter SDK](https://academy.insiderone.com/docs/flutter-integration) into a Flutter application on **iOS** and **Android**. One Dart codebase drives both platforms; the `flutter_insider` plugin brings the native Insider SDKs with it. On iOS the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**, on Android they come from the Insider Maven repository through Gradle. The app includes working examples of every major SDK feature, the two iOS push notification extensions, and Firebase / Huawei push on Android.
+This project demonstrates how to integrate the [Insider Flutter SDK](https://academy.insiderone.com/docs/flutter-integration) into a Flutter application on **iOS** and **Android**. One Dart codebase drives both platforms; the `flutter_insider` plugin brings the native Insider SDKs with it. 
+
+- On iOS; the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**.
+- On Android; they come from the Insider Maven repository through Gradle. 
+
+The app includes working examples of every major SDK feature, the two iOS push notification extensions, and Firebase / Huawei push on Android.
 
 ## Requirements
 
@@ -61,13 +66,7 @@ android/
         └── kotlin/.../MainActivity.kt
 ```
 
-| Platform | Dependency Manager | SDKs |
-|---|---|---|
-| iOS | Swift Package Manager | InsiderMobile, InsiderGeofence, InsiderHybrid, InsiderMobileAdvancedNotification (from the `Insider-iOS-SDK` package) |
-| iOS | CocoaPods | InsiderMobile, InsiderGeofence, InsiderHybrid (from the `flutter_insider` podspec), InsiderMobileAdvancedNotification |
-| Android | Gradle (Maven) | `com.useinsider:insider`, `com.useinsider:insiderhybrid`, Firebase Messaging, Play Services Location, Huawei Push / Location |
-
-The two iOS notification extensions are shared by both dependency managers. They link `InsiderMobileAdvancedNotification` from `Runner.app` and carry their own `InsiderInterface.storyboard`, so nothing in them changes when you switch channels.
+> The two iOS notification extensions are shared by both dependency managers. They link `InsiderMobileAdvancedNotification` from `Runner.app` and carry their own `InsiderInterface.storyboard`, so nothing in them changes when you switch channels.
 
 ## Getting Started
 
