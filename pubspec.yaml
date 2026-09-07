@@ -33,7 +33,7 @@ dependencies:
   flutter_insider:
     git:
       url: https://github.com/useinsider/flutter-insider.git
-      ref: 7c58805538203a567d516590888d87aef6e56e3a
+      ref: 643295f90b402e690df40a2a9b53cf6ffb638ce5
 
 
   # The following adds the Cupertino Icons font to your application.
