@@ -49,6 +49,8 @@ Note: Can easily find the warnings added as comments by searching the `FIXME-INS
 1. Pick one dependency channel:
    - **Swift Package Manager** (Flutter 3.24+): run `flutter config --enable-swift-package-manager`, then `flutter pub get`. The notification extensions (`InsiderNotificationContent`, `InsiderNotificationService`) still come from CocoaPods, so `flutter build ios` also runs `pod install` for them. That is the expected hybrid setup, not a fallback.
    - **CocoaPods**: run `flutter config --no-enable-swift-package-manager`, then go to the iOS folder with terminal and run the `pod install` command.
+
+   The notification extensions carry their own `InsiderInterface.storyboard` and take `InsiderMobileAdvancedNotification` from Runner on both channels; in CocoaPods mode the Podfile adds that pod to Runner automatically, so nothing needs editing per channel. Switching channels makes `pod install` add or remove the `[CP]` build phases in `project.pbxproj`; that diff is expected and safe to discard.
 2. Open XCode and check the app group and bundle identifier for all targets.
 3. Replace `insider` URL type in main target Info -> URL Types with your partner name. (This step is important to add test device with QR or Email in the panel.)
 4. Change `appGroup` values in `InsiderNotificationService/NotificationService.swift` and `InsiderNotificationContent/NotificationViewController.swift` files.
