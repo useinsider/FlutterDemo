@@ -44,17 +44,14 @@ Note: Can easily find the warnings added as comments by searching the `FIXME-INS
 
 ### iOS
 
-`flutter_insider` ships on iOS through both Swift Package Manager and CocoaPods. Pick one channel:
+`flutter_insider` ships on iOS through both Swift Package Manager and CocoaPods. Until the SwiftPM-capable release is on pub.dev, `pubspec.yaml` resolves the plugin from a pinned commit of the `feature/MOB-29522` branch.
 
-- **Swift Package Manager** (Flutter 3.24+; default from Flutter 3.44): run `flutter config --enable-swift-package-manager`, then `flutter pub get`. The notification extensions (`InsiderNotificationContent`, `InsiderNotificationService`) still come from CocoaPods, so `flutter build ios` also runs `pod install` for them. That is the expected hybrid setup, not a fallback.
-- **CocoaPods**: run `flutter config --no-enable-swift-package-manager`, then go to the iOS folder with terminal and run the `pod install` command.
-
-After changing the native Insider SDK version, run `flutter clean` and delete `~/Library/Developer/Xcode/DerivedData/Runner-*`; otherwise Xcode reuses a stale module cache.
-
-Until the SwiftPM-capable `flutter_insider` release is on pub.dev, `pubspec.yaml` resolves the plugin from the `feature/MOB-29522` git ref.
-
-1. Follow the channel steps above.
+1. Pick one dependency channel:
+   - **Swift Package Manager** (Flutter 3.24+): run `flutter config --enable-swift-package-manager`, then `flutter pub get`. The notification extensions (`InsiderNotificationContent`, `InsiderNotificationService`) still come from CocoaPods, so `flutter build ios` also runs `pod install` for them. That is the expected hybrid setup, not a fallback.
+   - **CocoaPods**: run `flutter config --no-enable-swift-package-manager`, then go to the iOS folder with terminal and run the `pod install` command.
 2. Open XCode and check the app group and bundle identifier for all targets.
 3. Replace `insider` URL type in main target Info -> URL Types with your partner name. (This step is important to add test device with QR or Email in the panel.)
 4. Change APP_GROUP variables value in `InsiderNotificationService/NotificationService.m` and `InsiderNotificationContent/NotificationViewController.m` files.
 5. And run project with XCode.
+
+After changing the native Insider SDK version, run `flutter clean` and delete `~/Library/Developer/Xcode/DerivedData/Runner-*`; otherwise Xcode reuses a stale module cache.
