@@ -1,14 +1,14 @@
 import InsiderMobileAdvancedNotification
 import UIKit
-import UserNotifications
-import UserNotificationsUI
+@preconcurrency import UserNotifications
+@preconcurrency import UserNotificationsUI
 
 /// Notification content extension that renders Insider interactive push notifications
 /// as an `iCarousel` of slides. The `carousel` outlet is wired by the SDK-provided
 /// `InsiderInterface.storyboard`.
 // The storyboard shipped in the pod references this class by its unmangled ObjC name.
 @objc(NotificationViewController)
-@MainActor public final class NotificationViewController: UIViewController, UNNotificationContentExtension, iCarouselDelegate, iCarouselDataSource {
+public final class NotificationViewController: UIViewController, UNNotificationContentExtension, iCarouselDelegate, iCarouselDataSource {
 
     @IBOutlet public var carousel: iCarousel!
 
