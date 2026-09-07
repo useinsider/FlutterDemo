@@ -16,14 +16,14 @@
 		986CB9582F0FC7A600E3D273 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 986CB9572F0FC7A600E3D273 /* GeneratedPluginRegistrant.m */; };
 		986CB95D2F0FC94D00E3D273 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 986CB95C2F0FC94D00E3D273 /* LaunchScreen.storyboard */; };
 		986CB95F2F0FCC7100E3D273 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986CB95E2F0FCC7100E3D273 /* SceneDelegate.swift */; };
+		B320C230208E4576BD70F66B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D8BAEF844B475023B907AA /* NotificationService.swift */; };
 		B47DE642A2911E59F3248B1B /* Pods_InsiderNotificationService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CDC63DB1A577A3A1B00EA6D /* Pods_InsiderNotificationService.framework */; };
+		C26C1339F16F1F143B7CA939 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1BB263ECD233EA5FA9E574 /* NotificationViewController.swift */; };
 		CBA38FABBEE9479118005EB7 /* Pods_InsiderNotificationContent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE4A049968EC141674840A8C /* Pods_InsiderNotificationContent.framework */; };
 		D4DB3BFE29ACC93E001FE6DC /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DB3BFD29ACC93E001FE6DC /* UserNotifications.framework */; };
 		D4DB3C0029ACC93E001FE6DC /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DB3BFF29ACC93E001FE6DC /* UserNotificationsUI.framework */; };
-		D4DB3C0429ACC93E001FE6DC /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB3C0329ACC93E001FE6DC /* NotificationViewController.m */; };
 		D4DB3C0729ACC93E001FE6DC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4DB3C0529ACC93E001FE6DC /* MainInterface.storyboard */; };
 		D4DB3C0B29ACC93E001FE6DC /* InsiderNotificationContent.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D4DB3BFC29ACC93E001FE6DC /* InsiderNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D4DB3C1929ACC960001FE6DC /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB3C1829ACC960001FE6DC /* NotificationService.m */; };
 		D4DB3C1D29ACC960001FE6DC /* InsiderNotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D4DB3C1529ACC960001FE6DC /* InsiderNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -97,19 +97,17 @@
 		D4DB3BFC29ACC93E001FE6DC /* InsiderNotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InsiderNotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DB3BFD29ACC93E001FE6DC /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		D4DB3BFF29ACC93E001FE6DC /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
-		D4DB3C0229ACC93E001FE6DC /* NotificationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationViewController.h; sourceTree = "<group>"; };
-		D4DB3C0329ACC93E001FE6DC /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		D4DB3C0629ACC93E001FE6DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		D4DB3C0829ACC93E001FE6DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4DB3C1529ACC960001FE6DC /* InsiderNotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InsiderNotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4DB3C1729ACC960001FE6DC /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
-		D4DB3C1829ACC960001FE6DC /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
 		D4DB3C1A29ACC960001FE6DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4DB3C2229ACC993001FE6DC /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		D4DB3C2329ACC9B4001FE6DC /* InsiderNotificationContent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InsiderNotificationContent.entitlements; sourceTree = "<group>"; };
 		D4DB3C2429ACC9C1001FE6DC /* InsiderNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InsiderNotificationService.entitlements; sourceTree = "<group>"; };
+		D7D8BAEF844B475023B907AA /* NotificationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		D7DE8F2B28E4AC34F81DF1F0 /* Pods-InsiderNotificationService.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InsiderNotificationService.profile.xcconfig"; path = "Target Support Files/Pods-InsiderNotificationService/Pods-InsiderNotificationService.profile.xcconfig"; sourceTree = "<group>"; };
 		EA352F62B6B4AED8E852A528 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		EC1BB263ECD233EA5FA9E574 /* NotificationViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		FE4A049968EC141674840A8C /* Pods_InsiderNotificationContent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InsiderNotificationContent.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE7CDAA6ED0FFADB8E514D1D /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -230,10 +228,9 @@
 			isa = PBXGroup;
 			children = (
 				D4DB3C2329ACC9B4001FE6DC /* InsiderNotificationContent.entitlements */,
-				D4DB3C0229ACC93E001FE6DC /* NotificationViewController.h */,
-				D4DB3C0329ACC93E001FE6DC /* NotificationViewController.m */,
 				D4DB3C0529ACC93E001FE6DC /* MainInterface.storyboard */,
 				D4DB3C0829ACC93E001FE6DC /* Info.plist */,
+				EC1BB263ECD233EA5FA9E574 /* NotificationViewController.swift */,
 			);
 			path = InsiderNotificationContent;
 			sourceTree = "<group>";
@@ -242,9 +239,8 @@
 			isa = PBXGroup;
 			children = (
 				D4DB3C2429ACC9C1001FE6DC /* InsiderNotificationService.entitlements */,
-				D4DB3C1729ACC960001FE6DC /* NotificationService.h */,
-				D4DB3C1829ACC960001FE6DC /* NotificationService.m */,
 				D4DB3C1A29ACC960001FE6DC /* Info.plist */,
+				D7D8BAEF844B475023B907AA /* NotificationService.swift */,
 			);
 			path = InsiderNotificationService;
 			sourceTree = "<group>";
@@ -575,7 +571,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4DB3C0429ACC93E001FE6DC /* NotificationViewController.m in Sources */,
+				C26C1339F16F1F143B7CA939 /* NotificationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,7 +579,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4DB3C1929ACC960001FE6DC /* NotificationService.m in Sources */,
+				B320C230208E4576BD70F66B /* NotificationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

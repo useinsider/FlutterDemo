@@ -51,7 +51,7 @@ Note: Can easily find the warnings added as comments by searching the `FIXME-INS
    - **CocoaPods**: run `flutter config --no-enable-swift-package-manager`, then go to the iOS folder with terminal and run the `pod install` command.
 2. Open XCode and check the app group and bundle identifier for all targets.
 3. Replace `insider` URL type in main target Info -> URL Types with your partner name. (This step is important to add test device with QR or Email in the panel.)
-4. Change APP_GROUP variables value in `InsiderNotificationService/NotificationService.m` and `InsiderNotificationContent/NotificationViewController.m` files.
+4. Change `appGroup` values in `InsiderNotificationService/NotificationService.swift` and `InsiderNotificationContent/NotificationViewController.swift` files.
 5. And run project with XCode.
 
 After changing the native Insider SDK version, run `flutter clean` and delete `~/Library/Developer/Xcode/DerivedData/Runner-*`; otherwise Xcode reuses a stale module cache.
