@@ -29,7 +29,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_insider: 5.0.1
+  # TODO(MOB-29522): switch back to the pub.dev pin once the SwiftPM release ships.
+  flutter_insider:
+    git:
+      url: https://github.com/useinsider/flutter-insider.git
+      ref: feature/MOB-29522
 
 
   # The following adds the Cupertino Icons font to your application.
