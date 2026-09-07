@@ -16,7 +16,6 @@ def flutter_root
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
   end
-
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
@@ -36,7 +35,7 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   # Under SwiftPM the flutter_insider package embeds this framework itself.
-  pod "InsiderMobileAdvancedNotification", "2.4.0" unless swift_package_manager_enabled?
+  pod "InsiderMobileAdvancedNotification" unless swift_package_manager_enabled?
 
   target 'InsiderNotificationContent' do
     inherit! :search_paths
