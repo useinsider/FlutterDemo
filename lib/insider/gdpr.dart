@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -19,7 +21,7 @@ class GDPR extends StatelessWidget {
               child: CustomButton(buttonText: 'GDPR True', onPressed: () {
                 FlutterInsider.Instance.setGDPRConsent(true);
 
-                print('INSIDER GDPR Status: true');
+                logInsider('INSIDER GDPR Status: true');
               }),
             ),
             SizedBox(
@@ -27,7 +29,7 @@ class GDPR extends StatelessWidget {
               child: CustomButton(buttonText: 'GDPR False', onPressed: () {
                 FlutterInsider.Instance.setGDPRConsent(false);
 
-                print('INSIDER GDPR Status: false');
+                logInsider('INSIDER GDPR Status: false');
               }),
             )
           ],
@@ -41,7 +43,7 @@ class GDPR extends StatelessWidget {
               child: CustomButton(buttonText: 'Set Mobile App Access', onPressed: () {
                 FlutterInsider.Instance.setMobileAppAccess(true);
 
-                print('[INSIDER][setMobileAppAccess]: Method is triggered.');
+                logInsider('[INSIDER][setMobileAppAccess]: Method is triggered.');
               }),
             ),
           ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -26,7 +28,7 @@ class PageVisit extends StatelessWidget {
               child: CustomButton(buttonText: 'Home Page', onPressed: () {
                 FlutterInsider.Instance.visitHomePage();
 
-                print('[INSIDER][visitHomePage]: Method is triggered.');
+                logInsider('[INSIDER][visitHomePage]: Method is triggered.');
               }),
             ),
             SizedBox(
@@ -34,7 +36,7 @@ class PageVisit extends StatelessWidget {
               child: CustomButton(buttonText: 'Product Page', onPressed: () {
                 FlutterInsider.Instance.visitProductDetailPage(insiderExampleProduct);
 
-                print('[INSIDER][visitProductDetailPage]: Method is triggered.');
+                logInsider('[INSIDER][visitProductDetailPage]: Method is triggered.');
               }),
             )
           ],
@@ -52,7 +54,7 @@ class PageVisit extends StatelessWidget {
 
                 FlutterInsider.Instance.visitCartPage(insiderExampleProducts);
 
-                print('[INSIDER][visitCartPage]: Method is triggered.');
+                logInsider('[INSIDER][visitCartPage]: Method is triggered.');
               }),
             ),
             SizedBox(
@@ -60,7 +62,7 @@ class PageVisit extends StatelessWidget {
               child: CustomButton(buttonText: 'Category Page', onPressed: () {
                 FlutterInsider.Instance.visitListingPage(taxonomy);
 
-                print('[INSIDER][visitListingPage]: Method is triggered.');
+                logInsider('[INSIDER][visitListingPage]: Method is triggered.');
               }),
             )
           ],

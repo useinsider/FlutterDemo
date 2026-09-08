@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -54,7 +56,7 @@ class Purchase extends StatelessWidget {
               child: CustomButton(buttonText: 'Item Add To Cart', onPressed: () {
                 FlutterInsider.Instance.itemAddedToCart(insiderExampleProduct);
 
-                print('[INSIDER][itemAddedToCart]: Method is triggered.');
+                logInsider('[INSIDER][itemAddedToCart]: Method is triggered.');
               }),
             ),
             SizedBox(
@@ -64,8 +66,8 @@ class Purchase extends StatelessWidget {
 
                 FlutterInsider.Instance.itemRemovedFromCart(productID);
 
-                print('[INSIDER][itemRemovedFromCart]: Method is triggered.');
-                print('[INSIDER][itemRemovedFromCart][productID]: $productID');
+                logInsider('[INSIDER][itemRemovedFromCart]: Method is triggered.');
+                logInsider('[INSIDER][itemRemovedFromCart][productID]: $productID');
               }),
             )
           ],
@@ -80,8 +82,8 @@ class Purchase extends StatelessWidget {
 
                 FlutterInsider.Instance.itemPurchased(uniqueSaleID, insiderExampleProduct);
 
-                print('[INSIDER][itemPurchased]: Method is triggered.');
-                print('[INSIDER][itemPurchased][uniqueSaleID]: $uniqueSaleID');
+                logInsider('[INSIDER][itemPurchased]: Method is triggered.');
+                logInsider('[INSIDER][itemPurchased][uniqueSaleID]: $uniqueSaleID');
               }),
             ),
             SizedBox(
@@ -89,7 +91,7 @@ class Purchase extends StatelessWidget {
               child: CustomButton(buttonText: 'Cart Clear', onPressed: () {
                 FlutterInsider.Instance.cartCleared();
 
-                print('[INSIDER][cartCleared]: Method is triggered.');
+                logInsider('[INSIDER][cartCleared]: Method is triggered.');
               }),
             )
           ],

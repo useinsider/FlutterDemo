@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -31,7 +33,7 @@ class UserIdentifier extends StatelessWidget {
                   // Login
                   currentUser.login(identifiers);
 
-                  print('[INSIDER][login]: Method is triggered.');
+                  logInsider('[INSIDER][login]: Method is triggered.');
                 }),
               ),
             ],
@@ -49,7 +51,7 @@ class UserIdentifier extends StatelessWidget {
                     // Logout
                     currentUser.logout();
 
-                    print('[INSIDER][logout]: Method is triggered.');
+                    logInsider('[INSIDER][logout]: Method is triggered.');
               }),
               ),
             ],
@@ -75,7 +77,7 @@ class UserIdentifier extends StatelessWidget {
                     // Logout Resetting Insider ID with Identifiers
                     currentUser.logoutResettingInsiderID(additionalIdentifiers);
 
-                    print('[INSIDER][logoutResettingInsiderID]: Method is triggered.');
+                    logInsider('[INSIDER][logoutResettingInsiderID]: Method is triggered.');
               }),
               ),
             ],

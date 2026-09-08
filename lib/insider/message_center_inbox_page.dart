@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
+import 'package:flutter_demo/theme/insider_colors.dart';
+
 import 'package:flutter_insider/flutter_insider.dart';
 
 class AppCardsPage extends StatefulWidget {
@@ -27,26 +31,26 @@ class _AppCardsPageState extends State<AppCardsPage> {
     });
 
     try {
-      print('[INSIDER][AppCards]: Loading campaigns...');
+      logInsider('[INSIDER][AppCards]: Loading campaigns...');
 
       final response = await FlutterInsider.Instance.appCards.getCampaigns();
       if (!mounted) return;
 
       if (response != null && response.appCards.isNotEmpty) {
-        print('[INSIDER][AppCards]: Received ${response.appCards.length} cards');
+        logInsider('[INSIDER][AppCards]: Received ${response.appCards.length} cards');
         setState(() {
           appCards = response.appCards;
           isLoading = false;
         });
       } else {
-        print('[INSIDER][AppCards]: No cards found');
+        logInsider('[INSIDER][AppCards]: No cards found');
         setState(() {
           appCards = [];
           isLoading = false;
         });
       }
     } catch (e) {
-      print('[INSIDER][AppCards]: Error loading cards: $e');
+      logInsider('[INSIDER][AppCards]: Error loading cards: $e');
       if (!mounted) return;
       setState(() {
         hasError = true;
@@ -65,13 +69,13 @@ class _AppCardsPageState extends State<AppCardsPage> {
             expandedHeight: 120.0,
             floating: false,
             pinned: true,
-            backgroundColor: Colors.black,
+            backgroundColor: InsiderColors.navy,
             flexibleSpace: FlexibleSpaceBar(
               title: const Text(
                 'App Cards',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: InsiderColors.white,
                 ),
               ),
               background: Container(
@@ -80,8 +84,8 @@ class _AppCardsPageState extends State<AppCardsPage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.deepPurple.shade700,
-                      Colors.deepPurple.shade900,
+                      InsiderColors.navy,
+                      InsiderColors.navyDark,
                     ],
                   ),
                 ),
@@ -92,7 +96,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
                     child: Text(
                       'Your cards and notifications',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: InsiderColors.onNavyVariant,
                         fontSize: 14,
                       ),
                     ),
@@ -130,7 +134,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
       padding: const EdgeInsets.all(48),
       child: const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+          valueColor: AlwaysStoppedAnimation<Color>(InsiderColors.navy),
         ),
       ),
     );
@@ -148,7 +152,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
             errorMessage,
             style: const TextStyle(
               fontSize: 16,
-              color: Colors.red,
+              color: InsiderColors.orange,
             ),
             textAlign: TextAlign.center,
           ),
@@ -156,8 +160,8 @@ class _AppCardsPageState extends State<AppCardsPage> {
           ElevatedButton(
             onPressed: loadAppCards,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
+              backgroundColor: InsiderColors.navy,
+              foregroundColor: InsiderColors.white,
             ),
             child: const Text('Retry'),
           ),
@@ -179,7 +183,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: InsiderColors.onSurface,
             ),
           ),
           SizedBox(height: 8),
@@ -187,7 +191,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
             'When you receive cards, they\'ll appear here',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.black54,
+              color: InsiderColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -202,25 +206,25 @@ class _AppCardsPageState extends State<AppCardsPage> {
     if (allIds.isEmpty) return;
 
     try {
-      print('[INSIDER][AppCards]: Deleting all ${allIds.length} cards');
+      logInsider('[INSIDER][AppCards]: Deleting all ${allIds.length} cards');
       await FlutterInsider.Instance.appCards.delete(allIds);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('All ${allIds.length} cards deleted'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
           duration: const Duration(seconds: 2),
         ),
       );
       await Future.delayed(const Duration(milliseconds: 500));
       loadAppCards();
     } catch (e) {
-      print('[INSIDER][AppCards]: Error deleting all cards: $e');
+      logInsider('[INSIDER][AppCards]: Error deleting all cards: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error deleting cards: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
         ),
       );
     }
@@ -235,11 +239,11 @@ class _AppCardsPageState extends State<AppCardsPage> {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _deleteAllCards,
-              icon: const Icon(Icons.delete_sweep, color: Colors.red),
+              icon: const Icon(Icons.delete_sweep, color: InsiderColors.orange),
               label: const Text('Remove All'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
+                foregroundColor: InsiderColors.orange,
+                side: const BorderSide(color: InsiderColors.orange),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -345,7 +349,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: InsiderColors.onSurface,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -357,7 +361,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                               description,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: Colors.black54,
+                                color: InsiderColors.onSurfaceVariant,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -384,7 +388,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                   'ID: ${cardId.length > 16 ? '${cardId.substring(0, 16)}...' : cardId}',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Colors.black38,
+                    color: InsiderColors.onSurfaceVariant,
                   ),
                 ),
 
@@ -400,9 +404,9 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                       child: OutlinedButton(
                         onPressed: () => isRead ? _markAsUnread() : _markAsRead(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.deepPurple,
+                          foregroundColor: InsiderColors.navy,
                           side: BorderSide(
-                            color: isRead ? Colors.grey.shade500 : Colors.deepPurple,
+                            color: isRead ? InsiderColors.onSurfaceVariant : InsiderColors.navy,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -417,8 +421,8 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                       child: OutlinedButton(
                         onPressed: () => _deleteCard(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          side: const BorderSide(color: Colors.red),
+                          foregroundColor: InsiderColors.orange,
+                          side: const BorderSide(color: InsiderColors.orange),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -432,8 +436,8 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                       child: ElevatedButton(
                         onPressed: () => _showCardDetails(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white,
+                          backgroundColor: InsiderColors.navy,
+                          foregroundColor: InsiderColors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -459,7 +463,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isRead ? Colors.grey.shade300 : Colors.deepPurple,
+        color: isRead ? InsiderColors.outline : InsiderColors.navy,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -469,7 +473,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: isRead ? Colors.grey.shade600 : Colors.white,
+              color: isRead ? InsiderColors.onSurfaceVariant : InsiderColors.white,
               shape: BoxShape.circle,
             ),
           ),
@@ -479,7 +483,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: isRead ? Colors.grey.shade700 : Colors.white,
+              color: isRead ? InsiderColors.onSurfaceVariant : InsiderColors.white,
               letterSpacing: 0.5,
             ),
           ),
@@ -506,7 +510,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Colors.grey.shade200,
+              color: InsiderColors.surfaceVariant,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -526,7 +530,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                 },
                 errorBuilder: (context, error, stackTrace) {
                   return const Center(
-                    child: Icon(Icons.broken_image, size: 48, color: Colors.grey),
+                    child: Icon(Icons.broken_image, size: 48, color: InsiderColors.onSurfaceVariant),
                   );
                 },
               ),
@@ -550,8 +554,8 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _currentImageIndex == index
-                ? Colors.deepPurple
-                : Colors.deepPurple.withValues(alpha: 0.3),
+                ? InsiderColors.navy
+                : InsiderColors.navy.withValues(alpha: 0.3),
           ),
         );
       }),
@@ -572,7 +576,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.bold,
-          color: Colors.grey.shade700,
+          color: InsiderColors.onSurfaceVariant,
         ),
       ),
       ...buttons.map((button) {
@@ -583,8 +587,8 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             child: ElevatedButton(
               onPressed: () => _handleButtonClick(button),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
+                backgroundColor: InsiderColors.navy,
+                foregroundColor: InsiderColors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -600,37 +604,37 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
 
   void _handleCardClick() {
     final appCard = widget.appCard;
-    print('[INSIDER][AppCardItem]: Card clicked');
-    print('  Card ID: ${appCard.id}');
+    logInsider('[INSIDER][AppCardItem]: Card clicked');
+    logInsider('  Card ID: ${appCard.id}');
 
     try {
       appCard.click();
-      print('[INSIDER][AppCardItem]: Card click tracked in SDK');
+      logInsider('[INSIDER][AppCardItem]: Card click tracked in SDK');
 
       final action = appCard.action;
       if (action is InsiderAppCardDeeplinkAction && action.url.isEmpty) {
         final jsonData = action.json;
         final keyValueData = action.keysAndValues;
         if (jsonData != null && jsonData.isNotEmpty) {
-          print('[INSIDER][AppCardItem]: Deep link JSON data: $jsonData');
+          logInsider('[INSIDER][AppCardItem]: Deep link JSON data: $jsonData');
         } else if (keyValueData != null && keyValueData.isNotEmpty) {
-          print('[INSIDER][AppCardItem]: Deep link key-value data: $keyValueData');
+          logInsider('[INSIDER][AppCardItem]: Deep link key-value data: $keyValueData');
         }
       }
     } catch (e) {
-      print('[INSIDER][AppCardItem]: Error handling card click: $e');
+      logInsider('[INSIDER][AppCardItem]: Error handling card click: $e');
     }
   }
 
   Future<void> _handleButtonClick(InsiderAppCardButton button) async {
-    print('[INSIDER][AppCardItem]: Button clicked');
-    print('  Button ID: ${button.id}');
-    print('  Button Text: ${button.text}');
-    print('  Card ID: ${widget.appCard.id}');
+    logInsider('[INSIDER][AppCardItem]: Button clicked');
+    logInsider('  Button ID: ${button.id}');
+    logInsider('  Button Text: ${button.text}');
+    logInsider('  Card ID: ${widget.appCard.id}');
 
     try {
       button.click();
-      print('[INSIDER][AppCardItem]: Button click tracked in SDK');
+      logInsider('[INSIDER][AppCardItem]: Button click tracked in SDK');
 
       final action = button.action;
 
@@ -642,7 +646,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
           final jsonData = deeplinkAction.json;
           final keyValueData = deeplinkAction.keysAndValues;
           if (jsonData != null && jsonData.isNotEmpty) {
-            print('[INSIDER][AppCardItem]: Deep link JSON data: $jsonData');
+            logInsider('[INSIDER][AppCardItem]: Deep link JSON data: $jsonData');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Deep link JSON: $jsonData'),
@@ -650,7 +654,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
               ),
             );
           } else if (keyValueData != null && keyValueData.isNotEmpty) {
-            print('[INSIDER][AppCardItem]: Deep link key-value data: $keyValueData');
+            logInsider('[INSIDER][AppCardItem]: Deep link key-value data: $keyValueData');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Deep link key-value: $keyValueData'),
@@ -675,11 +679,11 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
         );
       }
     } catch (e) {
-      print('[INSIDER][AppCardItem]: Error handling button click: $e');
+      logInsider('[INSIDER][AppCardItem]: Error handling button click: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
         ),
       );
     }
@@ -687,14 +691,14 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
 
   Future<void> _markAsRead() async {
     try {
-      print('[INSIDER][AppCardItem]: Marking card as read: ${widget.appCard.id}');
+      logInsider('[INSIDER][AppCardItem]: Marking card as read: ${widget.appCard.id}');
       await widget.appCard.markAsRead();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card marked as read'),
-          backgroundColor: Colors.green,
+          backgroundColor: InsiderColors.navy,
           duration: Duration(seconds: 2),
         ),
       );
@@ -702,12 +706,12 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       await Future.delayed(const Duration(milliseconds: 500));
       widget.onRefresh();
     } catch (e) {
-      print('[INSIDER][AppCardItem]: Error marking as read: $e');
+      logInsider('[INSIDER][AppCardItem]: Error marking as read: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error marking card as read: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
         ),
       );
     }
@@ -715,14 +719,14 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
 
   Future<void> _markAsUnread() async {
     try {
-      print('[INSIDER][AppCardItem]: Marking card as unread: ${widget.appCard.id}');
+      logInsider('[INSIDER][AppCardItem]: Marking card as unread: ${widget.appCard.id}');
       await widget.appCard.markAsUnread();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card marked as unread'),
-          backgroundColor: Colors.orange,
+          backgroundColor: InsiderColors.orange,
           duration: Duration(seconds: 2),
         ),
       );
@@ -730,12 +734,12 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       await Future.delayed(const Duration(milliseconds: 500));
       widget.onRefresh();
     } catch (e) {
-      print('[INSIDER][AppCardItem]: Error marking as unread: $e');
+      logInsider('[INSIDER][AppCardItem]: Error marking as unread: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error marking as unread: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
         ),
       );
     }
@@ -743,14 +747,14 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
 
   Future<void> _deleteCard() async {
     try {
-      print('[INSIDER][AppCardItem]: Deleting card: ${widget.appCard.id}');
+      logInsider('[INSIDER][AppCardItem]: Deleting card: ${widget.appCard.id}');
       await widget.appCard.delete();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card deleted'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
           duration: Duration(seconds: 2),
         ),
       );
@@ -758,12 +762,12 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       await Future.delayed(const Duration(milliseconds: 500));
       widget.onRefresh();
     } catch (e) {
-      print('[INSIDER][AppCardItem]: Error deleting card: $e');
+      logInsider('[INSIDER][AppCardItem]: Error deleting card: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error deleting card: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: InsiderColors.orange,
         ),
       );
     }
@@ -830,10 +834,10 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                         Text('${entry.key + 1}. ${btn.text}',
                             style: const TextStyle(fontSize: 12)),
                         Text('   ID: ${btn.id}',
-                            style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                            style: const TextStyle(fontSize: 11, color: InsiderColors.onSurfaceVariant)),
                         if (btn.action != null)
                           Text('   Action: ${btn.action!.actionType}',
-                              style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              style: const TextStyle(fontSize: 11, color: InsiderColors.onSurfaceVariant)),
                       ],
                     ),
                   );

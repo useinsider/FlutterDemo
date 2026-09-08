@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -20,7 +22,7 @@ class Geofence extends StatelessWidget {
                     // --- GEOFENCE --- //
                     FlutterInsider.Instance.startTrackingGeofence();
 
-                    print('[INSIDER][startTrackingGeofence]: Method is triggered.');
+                    logInsider('[INSIDER][startTrackingGeofence]: Method is triggered.');
               }),
             ),
           ],

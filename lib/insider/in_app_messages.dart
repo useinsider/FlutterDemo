@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -20,7 +22,7 @@ class InAppMessages extends StatelessWidget {
                     // --- ENABLE IN-APP MESSAGES --- //
                     FlutterInsider.Instance.enableInAppMessages();
 
-                    print('[INSIDER][enableInAppMessages]: Method is triggered.');
+                    logInsider('[INSIDER][enableInAppMessages]: Method is triggered.');
               }),
             ),
           ],
@@ -36,7 +38,7 @@ class InAppMessages extends StatelessWidget {
                     // --- DISABLE IN-APP MESSAGES --- //
                     FlutterInsider.Instance.disableInAppMessages();
 
-                    print('[INSIDER][disableInAppMessages]: Method is triggered.');
+                    logInsider('[INSIDER][disableInAppMessages]: Method is triggered.');
               }),
             ),
           ],
