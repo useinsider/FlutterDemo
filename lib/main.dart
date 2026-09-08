@@ -16,10 +16,14 @@ import 'package:flutter_demo/insider/Geofence.dart';
 import 'package:flutter_demo/insider/InAppMessages.dart';
 import 'package:flutter_demo/insider/Wishlist.dart';
 
+import 'package:flutter_demo/firebase/insider_push_bridge.dart';
+
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initFirebaseMessaging();
   runApp(const InsiderDemo());
 }
 
@@ -47,6 +51,7 @@ class InsiderDemo extends StatelessWidget {
     // This is an utility method, if you want to handle the push permission in iOS own your own you can omit the following method.
     FlutterInsider.Instance.setActiveForegroundPushView();
     FlutterInsider.Instance.registerWithQuietPermission(false);
+    logFcmToken();
     FlutterInsider.Instance.enableIDFACollection(true);
     FlutterInsider.Instance.enableIpCollection(true);
     FlutterInsider.Instance.enableCarrierCollection(true);

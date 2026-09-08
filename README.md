@@ -36,6 +36,9 @@ The app includes working examples of every major SDK feature, the two iOS push n
 ```
 lib/
 ├── main.dart                        # SDK initialization & callback handler
+├── firebase_options.dart            # Placeholder, replaced by `flutterfire configure`
+├── firebase/
+│   └── insider_push_bridge.dart     # Routes Firebase messages to Insider or the app
 ├── components/                      # Shared widgets
 └── insider/                         # One page per SDK feature
     ├── UserAttribute.dart, UserIdentifier.dart
@@ -77,6 +80,15 @@ git clone git@github.com:useinsider/FlutterDemo.git
 cd FlutterDemo
 flutter pub get
 ```
+
+The demo also integrates Firebase Messaging next to Insider (see [Firebase Messaging alongside Insider](#firebase-messaging-alongside-insider)). Point it at your own Firebase project with the FlutterFire CLI; the command overwrites the placeholder `lib/firebase_options.dart` with your project's values, so do not commit the result:
+
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure
+```
+
+Without this step the app still runs; Firebase is skipped with a `[FCM] Firebase not configured` log and only the Insider SDK is active.
 
 ### 2. Configure Your App
 
@@ -310,6 +322,50 @@ Both plugins are applied at the end of [`android/app/build.gradle`](android/app/
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.huawei.agconnect'
 ```
+
+## Firebase Messaging alongside Insider
+
+Many apps already use `firebase_messaging` for their own pushes. This demo shows both SDKs receiving pushes in the same app; the wiring lives in [`lib/firebase/insider_push_bridge.dart`](lib/firebase/insider_push_bridge.dart).
+
+An Insider push is recognised by `"source": "Insider"` in the message data. Messages that carry it are handed to `FlutterInsider.Instance.handleNotification`; everything else stays with the app:
+
+```dart
+Future<void> routeMessage(RemoteMessage message, {required String origin}) async {
+  if (message.data['source'] == 'Insider') {
+    await FlutterInsider.Instance.handleNotification({'data': message.data});
+    return;
+  }
+  print('[FCM][$origin]: ${message.data}');
+}
+
+FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler); // calls routeMessage
+FirebaseMessaging.onMessage.listen((m) => routeMessage(m, origin: 'foreground'));
+```
+
+To trigger push open tracking for an Insider message you render yourself in the foreground, use `triggerPushProcessWithNotificationData` instead of `handleNotification`.
+
+### iOS
+
+Keep the app delegate as the `UNUserNotificationCenter` delegate and let Firebase Messaging configure itself right after it, both before calling `super`. Flutter forwards every notification callback to all registered plugins, so the Insider SDK and Firebase Messaging both see each notification. The Firebase call is required because this app adopts the UIScene lifecycle and plugins register after `didFinishLaunchingWithOptions` returns:
+
+```swift
+UNUserNotificationCenter.current().delegate = self
+FLTFirebaseMessagingPlugin.configureNotificationCenterDelegate()
+return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+```
+
+Replacing the delegate with Firebase's own (dropping the first line) stops Insider from receiving notification callbacks.
+
+This ordering was verified on a simulator with `xcrun simctl push` payloads in the foreground: the Insider SDK's notification hook fires for both Insider and non-Insider payloads with the delegate line in place, and stops firing without it. Background and terminated-state delivery depends on APNs and a configured Firebase project and was not exercised here. On iOS the background handler runs on the main Flutter engine; on Android `firebase_messaging` starts a separate `FlutterEngine` that registers all plugins, so `handleNotification` is available in both cases.
+
+### Android
+
+Two services listen for `com.google.firebase.MESSAGING_EVENT`: the Insider SDK's own `InsiderFirebaseMessagingService` and `firebase_messaging`'s `FlutterFirebaseMessagingService`. Android delivers each message to a single service, chosen from the merged manifest, so check `build/app/intermediates/merged_manifests/debug/AndroidManifest.xml` after the first build:
+
+- If `FlutterFirebaseMessagingService` wins, the Dart bridge above forwards Insider messages to the SDK and nothing else is needed.
+- If `InsiderFirebaseMessagingService` wins, Insider pushes are handled natively but the SDK drops every other message. Give Firebase's service precedence by re-declaring it in `android/app/src/main/AndroidManifest.xml` with a higher `android:priority` on its intent filter (`tools:node="merge"`), and let the bridge do the routing.
+
+In this demo the merged manifest lists `FlutterFirebaseMessagingService` first and both services share the default priority, so Firebase's service receives the messages and the bridge routes Insider ones; no manifest change is needed.
 
 ## Runtime Permissions (Android)
 
