@@ -12,6 +12,9 @@ class InsiderChannelStub {
 
   final List<MethodCall> calls = <MethodCall>[];
 
+  /// Canned replies keyed by method name; anything unlisted answers `null`.
+  final Map<String, Object?> responses = <String, Object?>{};
+
   /// Installs the stub and tears it down again when the test ends.
   void install() {
     final TestDefaultBinaryMessenger messenger =
@@ -19,7 +22,7 @@ class InsiderChannelStub {
 
     messenger.setMockMethodCallHandler(_channel, (MethodCall call) async {
       calls.add(call);
-      return null;
+      return responses[call.method];
     });
 
     addTearDown(() => messenger.setMockMethodCallHandler(_channel, null));

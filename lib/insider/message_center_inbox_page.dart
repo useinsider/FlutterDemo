@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/theme/insider_colors.dart';
+import 'package:flutter_demo/theme/insider_theme.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 
@@ -321,15 +322,13 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
 
     return FadeTransition(
       opacity: _fadeAnimation,
+      // Surface comes from cardTheme: white, 18dp, 1dp outline, no shadow.
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => _handleCardClick(),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(InsiderTheme.cardRadius),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
