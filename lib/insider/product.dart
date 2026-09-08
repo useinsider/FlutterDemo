@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/src/product.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_insider/src/product.dart';
 class Product extends StatelessWidget {
   final arr = <String>['value1', 'value2', 'value3'];
 
-  Product();
+  Product({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +47,10 @@ class Product extends StatelessWidget {
                     .setCustomAttributeWithInt("int_parameter", 10)
                     .setCustomAttributeWithDouble("double_parameter", 10.5)
                     .setCustomAttributeWithBoolean("bool_parameter", true)
-                    .setCustomAttributeWithDate("date_parameter", new DateTime.now());
+                    .setCustomAttributeWithDate("date_parameter", DateTime.now());
 
                 // MARK: You can only call the method with array of string otherwise this event will be ignored.
-                insiderExampleProduct.setCustomAttributeWithArray("array_parameter", arr);
+                insiderExampleProduct.setCustomAttributeWithStringArray("array_parameter", arr);
 
                 print('[INSIDER][createNewProduct]: Method is triggered.');
               }),

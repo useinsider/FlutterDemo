@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/src/event.dart';
 
 class Event extends StatelessWidget {
   final arr = <String>['value1', 'value2', 'value3'];
-  Event();
+  Event({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +37,10 @@ class Event extends StatelessWidget {
                     .addParameterWithInt("int_parameter", 10)
                     .addParameterWithDouble("double_parameter", 10.5)
                     .addParameterWithBoolean("bool_parameter", true)
-                    .addParameterWithDate("date_parameter", new DateTime.now());
+                    .addParameterWithDate("date_parameter", DateTime.now());
 
                 // MARK: You can only call the method with array of string otherwise this event will be ignored.
-                insiderExampleEvent.addParameterWithArray("array_parameter", arr);
+                insiderExampleEvent.addParameterWithStringArray("array_parameter", arr);
 
                 // Do not forget to call build method once you are done with parameters.
                 // Otherwise your event will be ignored.

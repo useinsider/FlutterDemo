@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/ContentOptimizerDataType.dart';
 
 class ContentOptimizer extends StatelessWidget {
-  ContentOptimizer();
+  const ContentOptimizer({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 
 class InAppMessages extends StatelessWidget {
-  InAppMessages();
+  const InAppMessages({super.key});
 
   @override
   Widget build(BuildContext context) {

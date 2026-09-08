@@ -41,12 +41,12 @@ lib/
 │   └── insider_push_bridge.dart     # Routes Firebase messages to Insider or the app
 ├── components/                      # Shared widgets
 └── insider/                         # One page per SDK feature
-    ├── UserAttribute.dart, UserIdentifier.dart
-    ├── Event.dart, Product.dart, Purchase.dart, Wishlist.dart
-    ├── SmartRecommender.dart, ContentOptimizer.dart
-    ├── PageVisit.dart, GDPR.dart, Geofence.dart
-    ├── InAppMessages.dart
-    └── MessageCenter.dart, MessageCenterInboxPage.dart
+    ├── user_attribute.dart, user_identifier.dart
+    ├── event.dart, product.dart, purchase.dart, wishlist.dart
+    ├── smart_recommender.dart, content_optimizer.dart
+    ├── page_visit.dart, gdpr.dart, geofence.dart
+    ├── in_app_messages.dart
+    └── message_center.dart, message_center_inbox_page.dart
 
 ios/
 ├── Podfile                          # Adds InsiderMobileAdvancedNotification to Runner in CocoaPods mode

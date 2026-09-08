@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/src/user.dart';
 import 'package:flutter_insider/src/identifiers.dart';
 
 class UserIdentifier extends StatelessWidget {
-  UserIdentifier();
+  const UserIdentifier({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class UserIdentifier extends StatelessWidget {
                 child: CustomButton(buttonText: 'Login', onPressed: () async {
                   // Setting User Identifiers.
                   FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
-                  FlutterInsiderIdentifiers identifiers = new FlutterInsiderIdentifiers();
+                  FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers();
 
                   identifiers.addEmail("mobile.test@useinsider.com");
                   identifiers.addPhoneNumber("+909876543210");
@@ -64,7 +64,7 @@ class UserIdentifier extends StatelessWidget {
                     backgroundColor: const Color.fromRGBO(229, 127, 116, 1),
                     onPressed: () async {
                     FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
-                    FlutterInsiderIdentifiers identifiers = new FlutterInsiderIdentifiers();
+                    FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers();
 
                     identifiers.addEmail("mobile.test@useinsider.com");
                     identifiers.addPhoneNumber("+909876543210");

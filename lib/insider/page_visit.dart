@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/src/product.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_insider/src/product.dart';
 class PageVisit extends StatelessWidget {
   final taxonomy = <String>['tax1', 'tax2', 'tax3'];
 
-  PageVisit();
+  PageVisit({super.key});
 
   @override
   Widget build(BuildContext context) {

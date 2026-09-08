@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_demo/components/CustomTitle.dart';
+import 'package:flutter_demo/components/custom_title.dart';
 
-import 'package:flutter_demo/insider/Event.dart';
-import 'package:flutter_demo/insider/GDPR.dart';
-import 'package:flutter_demo/insider/MessageCenter.dart';
-import 'package:flutter_demo/insider/PageVisit.dart';
-import 'package:flutter_demo/insider/Product.dart';
-import 'package:flutter_demo/insider/Purchase.dart';
-import 'package:flutter_demo/insider/SmartRecommender.dart';
-import 'package:flutter_demo/insider/UserAttribute.dart';
-import 'package:flutter_demo/insider/UserIdentifier.dart';
-import 'package:flutter_demo/insider/ContentOptimizer.dart';
-import 'package:flutter_demo/insider/Geofence.dart';
-import 'package:flutter_demo/insider/InAppMessages.dart';
-import 'package:flutter_demo/insider/Wishlist.dart';
+import 'package:flutter_demo/insider/event.dart';
+import 'package:flutter_demo/insider/gdpr.dart';
+import 'package:flutter_demo/insider/message_center.dart';
+import 'package:flutter_demo/insider/page_visit.dart';
+import 'package:flutter_demo/insider/product.dart';
+import 'package:flutter_demo/insider/purchase.dart';
+import 'package:flutter_demo/insider/smart_recommender.dart';
+import 'package:flutter_demo/insider/user_attribute.dart';
+import 'package:flutter_demo/insider/user_identifier.dart';
+import 'package:flutter_demo/insider/content_optimizer.dart';
+import 'package:flutter_demo/insider/geofence.dart';
+import 'package:flutter_demo/insider/in_app_messages.dart';
+import 'package:flutter_demo/insider/wishlist.dart';
 
 import 'package:flutter_demo/firebase/insider_push_bridge.dart';
 
@@ -28,7 +28,7 @@ Future<void> main() async {
 }
 
 class InsiderDemo extends StatelessWidget {
-  const InsiderDemo({Key? key}) : super(key: key);
+  const InsiderDemo({super.key});
 
   Future initInsider() async {
     // FIXME-INSIDER: Please change with your partner name and app group.
@@ -71,7 +71,7 @@ class InsiderDemo extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({super.key, required this.title});
   final String title;
 
   @override
