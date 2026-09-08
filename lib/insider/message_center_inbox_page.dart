@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_insider/flutter_insider.dart';
 
 class AppCardsPage extends StatefulWidget {
-  const AppCardsPage({Key? key}) : super(key: key);
+  const AppCardsPage({super.key});
 
   @override
   State<AppCardsPage> createState() => _AppCardsPageState();
@@ -204,6 +204,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
     try {
       print('[INSIDER][AppCards]: Deleting all ${allIds.length} cards');
       await FlutterInsider.Instance.appCards.delete(allIds);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('All ${allIds.length} cards deleted'),
@@ -215,6 +216,7 @@ class _AppCardsPageState extends State<AppCardsPage> {
       loadAppCards();
     } catch (e) {
       print('[INSIDER][AppCards]: Error deleting all cards: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error deleting cards: $e'),
@@ -268,10 +270,9 @@ class _AppCardItem extends StatefulWidget {
   final VoidCallback onRefresh;
 
   const _AppCardItem({
-    Key? key,
     required this.appCard,
     required this.onRefresh,
-  }) : super(key: key);
+  });
 
   @override
   State<_AppCardItem> createState() => _AppCardItemState();
@@ -380,7 +381,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                 // Card ID
                 const SizedBox(height: 16),
                 Text(
-                  'ID: ${cardId.length > 16 ? cardId.substring(0, 16) + '...' : cardId}',
+                  'ID: ${cardId.length > 16 ? '${cardId.substring(0, 16)}...' : cardId}',
                   style: const TextStyle(
                     fontSize: 11,
                     color: Colors.black38,
@@ -550,7 +551,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             shape: BoxShape.circle,
             color: _currentImageIndex == index
                 ? Colors.deepPurple
-                : Colors.deepPurple.withOpacity(0.3),
+                : Colors.deepPurple.withValues(alpha: 0.3),
           ),
         );
       }),
@@ -593,7 +594,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
             ),
           ),
         );
-      }).toList(),
+      }),
     ];
   }
 
@@ -689,6 +690,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       print('[INSIDER][AppCardItem]: Marking card as read: ${widget.appCard.id}');
       await widget.appCard.markAsRead();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card marked as read'),
@@ -701,6 +703,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       widget.onRefresh();
     } catch (e) {
       print('[INSIDER][AppCardItem]: Error marking as read: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error marking card as read: $e'),
@@ -715,6 +718,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       print('[INSIDER][AppCardItem]: Marking card as unread: ${widget.appCard.id}');
       await widget.appCard.markAsUnread();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card marked as unread'),
@@ -727,6 +731,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       widget.onRefresh();
     } catch (e) {
       print('[INSIDER][AppCardItem]: Error marking as unread: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error marking as unread: $e'),
@@ -741,6 +746,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       print('[INSIDER][AppCardItem]: Deleting card: ${widget.appCard.id}');
       await widget.appCard.delete();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Card deleted'),
@@ -753,6 +759,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
       widget.onRefresh();
     } catch (e) {
       print('[INSIDER][AppCardItem]: Error deleting card: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error deleting card: $e'),
@@ -804,7 +811,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                     child: Text('${entry.key + 1}. ${entry.value.url}',
                         style: const TextStyle(fontSize: 12)),
                   );
-                }).toList(),
+                }),
               ],
               if (buttons.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -830,7 +837,7 @@ class _AppCardItemState extends State<_AppCardItem> with SingleTickerProviderSta
                       ],
                     ),
                   );
-                }).toList(),
+                }),
               ],
               if (appCard.action != null) ...[
                 const SizedBox(height: 16),

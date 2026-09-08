@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 
 class Geofence extends StatelessWidget {
-  Geofence();
+  const Geofence({super.key});
 
   @override
   Widget build(BuildContext context) {

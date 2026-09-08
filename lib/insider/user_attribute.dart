@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
+import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/InsiderGender.dart';
 import 'package:flutter_insider/src/user.dart';
 
 class UserAttribute extends StatelessWidget {
-  UserAttribute();
+  const UserAttribute({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class UserAttribute extends StatelessWidget {
                 currentUser.setSurname("Demo");
                 currentUser.setAge(23);
                 currentUser.setGender(InsiderGender.OTHER);
-                currentUser.setBirthday(new DateTime.now());
+                currentUser.setBirthday(DateTime.now());
                 currentUser.setEmailOptin(true);
                 currentUser.setSMSOptin(false);
                 currentUser.setPushOptin(true);

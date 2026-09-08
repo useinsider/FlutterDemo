@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/components/CustomButton.dart';
-import 'package:flutter_demo/insider/MessageCenterInboxPage.dart';
+import 'package:flutter_demo/components/custom_button.dart';
+import 'package:flutter_demo/insider/message_center_inbox_page.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 
 class MessageCenter extends StatelessWidget {
-  MessageCenter();
+  const MessageCenter({super.key});
 
   @override
   Widget build(BuildContext context) {
