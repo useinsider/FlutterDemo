@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_demo/components/playground_console.dart';
-
 import 'package:flutter_demo/components/insider_card.dart';
 import 'package:flutter_demo/theme/insider_colors.dart';
 import 'package:flutter_demo/theme/insider_theme.dart';
-
-import 'package:flutter_insider/flutter_insider.dart';
 
 /// The Flutter twin of the native Android demo's App Frames screen
 /// (`activity_app_frames.xml` + `item_app_frames_placement.xml`). Element order
 /// and labels are the ones in that layout's `app_frames_*` strings, so the two
 /// demos read the same on both platforms.
 ///
-/// The GDPR and mobile-access controls drive the SDK for real. The frame itself
-/// does not: flutter_insider exposes no App Frames API — there is no Flutter
-/// counterpart to Android's `InsiderAppFramesView` — so each placement card
-/// carries a placeholder in its place. See [_AppFramePlaceholder].
+/// The native screen's GDPR and mobile-access rows are deliberately absent: they
+/// were test-only affordances, and partners are the ones who ship these
+/// mini-apps. The Playground home still carries the consent controls.
+///
+/// The frame itself is a placeholder: flutter_insider exposes no App Frames API
+/// — there is no Flutter counterpart to Android's `InsiderAppFramesView` — so
+/// each placement card carries one in its place. See [_AppFramePlaceholder].
 class AppFramesPage extends StatefulWidget {
   const AppFramesPage({super.key});
 
@@ -33,11 +32,6 @@ class _AppFramesPageState extends State<AppFramesPage> {
   /// Per-placement attach state and status label, keyed by placement id.
   final Map<String, bool> _attached = <String, bool>{};
   final Map<String, String> _status = <String, String>{};
-
-  /// Mirrors the last consent values set from this screen — the SDK exposes no
-  /// getter for either, so the consent line reports what was set here.
-  bool _gdprConsent = true;
-  bool _mobileAppAccess = true;
 
   @override
   void dispose() {
@@ -75,20 +69,6 @@ class _AppFramesPageState extends State<AppFramesPage> {
     });
   }
 
-  void _setGdprConsent(bool consent) {
-    FlutterInsider.Instance.setGDPRConsent(consent);
-    logInsider('[INSIDER][setGDPRConsent]: $consent');
-
-    setState(() => _gdprConsent = consent);
-  }
-
-  void _setMobileAppAccess(bool access) {
-    FlutterInsider.Instance.setMobileAppAccess(access);
-    logInsider('[INSIDER][setMobileAppAccess]: $access');
-
-    setState(() => _mobileAppAccess = access);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,35 +96,6 @@ class _AppFramesPageState extends State<AppFramesPage> {
               ),
             ),
 
-            // Flips the SDK-wide consent so the placement path's consent gate can
-            // be exercised end to end, mirroring the Android screen's GDPR row.
-            _ButtonPair(
-              leftLabel: 'GDPR ON',
-              rightLabel: 'GDPR OFF',
-              onLeft: () => _setGdprConsent(true),
-              onRight: () => _setGdprConsent(false),
-            ),
-            _ButtonPair(
-              leftLabel: 'MOBILE ACCESS ON',
-              rightLabel: 'MOBILE ACCESS OFF',
-              onLeft: () => _setMobileAppAccess(true),
-              onRight: () => _setMobileAppAccess(false),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 2),
-              child: Text(
-                'Last set here — GDPR: ${_stateLabel(_gdprConsent)}'
-                '  ·  Mobile access: ${_stateLabel(_mobileAppAccess)}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: InsiderColors.onSurface,
-                ),
-              ),
-            ),
-
             for (final String placementId in _placements)
               _PlacementCard(
                 placementId: placementId,
@@ -155,46 +106,6 @@ class _AppFramesPageState extends State<AppFramesPage> {
               ),
           ],
         ),
-      ),
-    );
-  }
-
-  static String _stateLabel(bool value) => value ? 'ON' : 'OFF';
-}
-
-/// The side-by-side outlined pair the Android screen uses for both consent rows.
-class _ButtonPair extends StatelessWidget {
-  final String leftLabel;
-  final String rightLabel;
-  final VoidCallback onLeft;
-  final VoidCallback onRight;
-
-  const _ButtonPair({
-    required this.leftLabel,
-    required this.rightLabel,
-    required this.onLeft,
-    required this.onRight,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: OutlinedButton(onPressed: onLeft, child: Text(leftLabel)),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: OutlinedButton(onPressed: onRight, child: Text(rightLabel)),
-            ),
-          ),
-        ],
       ),
     );
   }

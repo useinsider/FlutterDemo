@@ -8,11 +8,9 @@ import 'package:flutter_demo/theme/insider_theme.dart';
 import 'insider_channel_stub.dart';
 
 void main() {
-  late InsiderChannelStub insider;
-
-  setUp(() {
-    insider = InsiderChannelStub()..install();
-  });
+  // The page itself makes no SDK calls any more, but the stub stays installed so
+  // any that creep back in fail here instead of reaching a real channel.
+  setUp(() => InsiderChannelStub().install());
 
   Future<void> pumpPage(WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -35,25 +33,11 @@ void main() {
 
       expect(find.text('e.g., home_page'), findsOneWidget);
       expect(find.text('+ Add Placement'), findsOneWidget);
-      expect(find.text('GDPR ON'), findsOneWidget);
-      expect(find.text('GDPR OFF'), findsOneWidget);
-      expect(find.text('MOBILE ACCESS ON'), findsOneWidget);
-      expect(find.text('MOBILE ACCESS OFF'), findsOneWidget);
-      expect(
-        find.text('Last set here — GDPR: ON  ·  Mobile access: ON'),
-        findsOneWidget,
-      );
 
-      // The consent line sits below both button rows, above the placement cards.
-      final double gdprRowY = tester.getTopLeft(find.text('GDPR ON')).dy;
-      final double accessRowY =
-          tester.getTopLeft(find.text('MOBILE ACCESS ON')).dy;
-      final double consentY = tester
-          .getTopLeft(find.textContaining('Last set here — GDPR:'))
-          .dy;
-
-      expect(gdprRowY, lessThan(accessRowY));
-      expect(accessRowY, lessThan(consentY));
+      // The consent controls belong to the Playground home, not here: partners
+      // ship these mini-apps, so the screen carries no SDK-wide toggles.
+      expect(find.textContaining('GDPR'), findsNothing);
+      expect(find.textContaining('MOBILE ACCESS'), findsNothing);
     });
 
     testWidgets('starts with no placement cards', (WidgetTester tester) async {
@@ -145,38 +129,6 @@ void main() {
       expect(
         deleteButton.style?.foregroundColor?.resolve(<WidgetState>{}),
         InsiderColors.orange,
-      );
-    });
-  });
-
-  group('consent controls', () {
-    testWidgets('GDPR buttons reach the SDK and update the consent line',
-        (WidgetTester tester) async {
-      await pumpPage(tester);
-
-      await tester.tap(find.text('GDPR OFF'));
-      await tester.pumpAndSettle();
-
-      expect(insider.methods, contains('setGDPRConsent'));
-      expect(insider.calls.last.arguments['consent'], false);
-      expect(
-        find.text('Last set here — GDPR: OFF  ·  Mobile access: ON'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('mobile access buttons reach the SDK and update the line',
-        (WidgetTester tester) async {
-      await pumpPage(tester);
-
-      await tester.tap(find.text('MOBILE ACCESS OFF'));
-      await tester.pumpAndSettle();
-
-      expect(insider.methods, contains('setMobileAppAccess'));
-      expect(insider.calls.last.arguments['mobileAppAccess'], false);
-      expect(
-        find.text('Last set here — GDPR: ON  ·  Mobile access: OFF'),
-        findsOneWidget,
       );
     });
   });
