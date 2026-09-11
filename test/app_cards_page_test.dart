@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_demo/insider/message_center_inbox_page.dart';
+import 'package:flutter_demo/insider/app_cards_page.dart';
 import 'package:flutter_demo/theme/insider_colors.dart';
 import 'package:flutter_demo/theme/insider_theme.dart';
 

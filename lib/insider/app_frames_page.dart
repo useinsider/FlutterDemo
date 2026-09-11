@@ -11,7 +11,9 @@ import 'package:flutter_demo/theme/insider_theme.dart';
 ///
 /// The native screen's GDPR and mobile-access rows are deliberately absent: they
 /// were test-only affordances, and partners are the ones who ship these
-/// mini-apps. The Playground home still carries the consent controls.
+/// mini-apps. The Playground home carries the GDPR consent calls (`gdpr.dart`)
+/// under `GDPR True` / `GDPR False`; there is no mobile-access control and no
+/// consent summary line anywhere in this demo.
 ///
 /// The frame itself is a placeholder: flutter_insider exposes no App Frames API
 /// — there is no Flutter counterpart to Android's `InsiderAppFramesView` — so

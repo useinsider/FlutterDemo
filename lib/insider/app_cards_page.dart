@@ -22,7 +22,14 @@ class _AppCardsPageState extends State<AppCardsPage> {
   @override
   void initState() {
     super.initState();
-    loadAppCards();
+    // Deferred to after the frame: loadAppCards logs before its first await, and
+    // logInsider notifies the Playground console's AnimatedBuilder. Called
+    // straight from initState that notification lands inside the build phase and
+    // the framework reports "markNeedsBuild() called during build".
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      loadAppCards();
+    });
   }
 
   Future<void> loadAppCards() async {

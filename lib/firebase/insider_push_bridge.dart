@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_insider/flutter_insider.dart';
 
+import 'package:flutter_demo/components/playground_console.dart';
+
 import '../firebase_options.dart';
 
 /// Routes Firebase Cloud Messaging traffic so that Insider pushes reach the
@@ -58,12 +60,12 @@ Future<bool> initFirebaseMessaging() async {
   FirebaseMessaging.onMessage
       .listen((message) => routeMessage(message, origin: 'foreground'));
   FirebaseMessaging.onMessageOpenedApp
-      .listen((message) => print('[FCM][opened]: ${message.data}'));
+      .listen((message) => logInsider('[FCM][opened]: ${message.data}'));
   return true;
 }
 
 Future<void> logFcmToken() async {
   if (Firebase.apps.isEmpty) return;
   final token = await FirebaseMessaging.instance.getToken();
-  print('[FCM][token]: $token');
+  logInsider('[FCM][token]: $token');
 }

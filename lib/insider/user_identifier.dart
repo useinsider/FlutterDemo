@@ -44,7 +44,6 @@ class UserIdentifier extends StatelessWidget {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: CustomButton(buttonText: 'Logout',
-                    backgroundColor: const Color.fromRGBO(229, 127, 116, 1),
                     onPressed: () async {
                     FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
 
@@ -63,7 +62,6 @@ class UserIdentifier extends StatelessWidget {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: CustomButton(buttonText: 'Logout Resetting Insider ID',
-                    backgroundColor: const Color.fromRGBO(229, 127, 116, 1),
                     onPressed: () async {
                     FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
                     FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers();

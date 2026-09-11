@@ -120,10 +120,12 @@ void main() {
       );
       expect(trashIcon.size, 14);
 
+      // bySubtype, not byType: older Flutter versions build TextButton.icon as a
+      // private TextButton subclass, which an exact-type finder never matches.
       final TextButton deleteButton = tester.widget<TextButton>(
         find.ancestor(
           of: find.text('Delete'),
-          matching: find.byType(TextButton),
+          matching: find.bySubtype<TextButton>(),
         ),
       );
       expect(

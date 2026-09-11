@@ -42,13 +42,13 @@ class InsiderDemo extends StatelessWidget {
         (int type, dynamic data) {
       switch (type) {
         case InsiderCallbackAction.NOTIFICATION_OPEN:
-          print('[INSIDER][NOTIFICATION_OPEN]: $data');
+          logInsider('[INSIDER][NOTIFICATION_OPEN]: $data');
           break;
         case InsiderCallbackAction.TEMP_STORE_CUSTOM_ACTION:
-          print('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
+          logInsider('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
           break;
         default:
-          print("[INSIDER][InsiderCallbackAction]: Unregistered Action!");
+          logInsider('[INSIDER][InsiderCallbackAction]: Unregistered Action!');
           break;
       }
     });
