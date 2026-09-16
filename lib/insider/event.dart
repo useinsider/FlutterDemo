@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -46,7 +48,7 @@ class Event extends StatelessWidget {
                 // Otherwise your event will be ignored.
                 insiderExampleEvent.build();
 
-                print('Insider events triggered.');
+                logInsider('Insider events triggered.');
               }),
             ),
           ],

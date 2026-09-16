@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -52,7 +54,7 @@ class Product extends StatelessWidget {
                 // MARK: You can only call the method with array of string otherwise this event will be ignored.
                 insiderExampleProduct.setCustomAttributeWithStringArray("array_parameter", arr);
 
-                print('[INSIDER][createNewProduct]: Method is triggered.');
+                logInsider('[INSIDER][createNewProduct]: Method is triggered.');
               }),
             ),
           ],

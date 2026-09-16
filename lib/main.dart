@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_demo/components/custom_title.dart';
+import 'package:flutter_demo/components/mini_apps_sheet.dart';
+import 'package:flutter_demo/components/playground_console.dart';
 
 import 'package:flutter_demo/insider/event.dart';
 import 'package:flutter_demo/insider/gdpr.dart';
-import 'package:flutter_demo/insider/message_center.dart';
 import 'package:flutter_demo/insider/page_visit.dart';
 import 'package:flutter_demo/insider/product.dart';
 import 'package:flutter_demo/insider/purchase.dart';
 import 'package:flutter_demo/insider/smart_recommender.dart';
 import 'package:flutter_demo/insider/user_attribute.dart';
 import 'package:flutter_demo/insider/user_identifier.dart';
+import 'package:flutter_demo/insider/app_cards.dart';
 import 'package:flutter_demo/insider/content_optimizer.dart';
 import 'package:flutter_demo/insider/geofence.dart';
 import 'package:flutter_demo/insider/in_app_messages.dart';
 import 'package:flutter_demo/insider/wishlist.dart';
 
 import 'package:flutter_demo/firebase/insider_push_bridge.dart';
+
+import 'package:flutter_demo/theme/insider_colors.dart';
+import 'package:flutter_demo/theme/insider_theme.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
@@ -37,13 +42,13 @@ class InsiderDemo extends StatelessWidget {
         (int type, dynamic data) {
       switch (type) {
         case InsiderCallbackAction.NOTIFICATION_OPEN:
-          print('[INSIDER][NOTIFICATION_OPEN]: $data');
+          logInsider('[INSIDER][NOTIFICATION_OPEN]: $data');
           break;
         case InsiderCallbackAction.TEMP_STORE_CUSTOM_ACTION:
-          print('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
+          logInsider('[INSIDER][TEMP_STORE_CUSTOM_ACTION]: $data');
           break;
         default:
-          print("[INSIDER][InsiderCallbackAction]: Unregistered Action!");
+          logInsider('[INSIDER][InsiderCallbackAction]: Unregistered Action!');
           break;
       }
     });
@@ -63,9 +68,10 @@ class InsiderDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     initInsider();
 
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      home: HomePage(title: '[Flutter] Insider SDK Demo'),
+      theme: InsiderTheme.light,
+      home: const HomePage(title: '[Flutter] Insider SDK Demo'),
     );
   }
 }
@@ -81,73 +87,99 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    // The Playground home in the native demos runs on the cream iOS canvas,
+    // not the navy brand: a slim logo bar, a fixed output console, then the
+    // action sections, with the mini-apps switcher floating over them.
     return Scaffold(
+      backgroundColor: InsiderColors.iosCanvas,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => MiniAppsSheet.show(context),
+        backgroundColor: InsiderColors.navy,
+        foregroundColor: InsiderColors.white,
+        icon: const Icon(Icons.apps),
+        label: const Text('Apps'),
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Image.asset(
-                  'assets/images/insider-one.png',
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: 150,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _PlaygroundTopBar(),
+            const PlaygroundConsole(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 88),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    CustomTitle(title: 'User Attributes'),
+                    UserAttribute(),
+                    CustomTitle(title: 'User Identifiers'),
+                    UserIdentifier(),
+                    CustomTitle(title: 'Event'),
+                    Event(),
+                    CustomTitle(title: 'Product'),
+                    Product(),
+                    CustomTitle(title: 'Purchase'),
+                    Purchase(),
+                    CustomTitle(title: 'Smart Recommender'),
+                    SmartRecommender(),
+                    CustomTitle(title: 'Page Visit Methods'),
+                    PageVisit(),
+                    CustomTitle(title: 'GDPR'),
+                    GDPR(),
+                    CustomTitle(title: 'App Cards'),
+                    AppCards(),
+                    CustomTitle(title: 'Content Optimizer'),
+                    ContentOptimizer(),
+                    CustomTitle(title: 'Geofence'),
+                    Geofence(),
+                    CustomTitle(title: 'In-App Messages'),
+                    InAppMessages(),
+                    CustomTitle(title: 'Wishlist'),
+                    Wishlist(),
+                  ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: const <Widget>[
-                        Text(
-                          '[Flutter] Insider SDK Demo',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'This Demo contains simple methods that you can use with the Insider SDK.',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                  CustomTitle(title: 'User Attributes'),
-                  UserAttribute(),
-                  CustomTitle(title: 'User Identifiers'),
-                  UserIdentifier(),
-                  CustomTitle(title: 'Event'),
-                  Event(),
-                  CustomTitle(title: 'Product'),
-                  Product(),
-                  CustomTitle(title: 'Purchase'),
-                  Purchase(),
-                  CustomTitle(title: 'Smart Recommender'),
-                  SmartRecommender(),
-                  CustomTitle(title: 'Page Visit Methods'),
-                  PageVisit(),
-                  CustomTitle(title: 'GDPR'),
-                  GDPR(),
-                  CustomTitle(title: 'App Cards'),
-                  MessageCenter(),
-                  CustomTitle(title: 'Content Optimizer'),
-                  ContentOptimizer(),
-                  CustomTitle(title: 'Geofence'),
-                  Geofence(),
-                  CustomTitle(title: 'In-App Messages'),
-                  InAppMessages(),
-                  CustomTitle(title: 'Wishlist'),
-                  Wishlist(),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+/// The slim transparent bar over the cream canvas: the Insider mark centred,
+/// a round clear button on the trailing edge — `playgroundTopBar`.
+class _PlaygroundTopBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Image.asset('assets/images/insider-one.png', height: 26),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Material(
+              color: InsiderColors.white,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: PlaygroundLog.instance.clear,
+                customBorder: const CircleBorder(),
+                child: const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Icon(
+                    Icons.clear,
+                    size: 20,
+                    color: InsiderColors.iosTextPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

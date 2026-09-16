@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -26,21 +28,21 @@ class ContentOptimizer extends StatelessWidget {
                         "defaultValue",
                         ContentOptimizerDataType.ELEMENT);
 
-                    print('[INSIDER][getContentStringWithName]: $contentOptimizerString');
+                    logInsider('[INSIDER][getContentStringWithName]: $contentOptimizerString');
 
                     // Boolean
                     var contentOptimizerBool =
                         await FlutterInsider.Instance.getContentBoolWithName(
                         "bool_variable_name", true, ContentOptimizerDataType.ELEMENT);
 
-                    print('[INSIDER][getContentBoolWithName]: $contentOptimizerBool');
+                    logInsider('[INSIDER][getContentBoolWithName]: $contentOptimizerBool');
 
                     // Integer
                     var contentOptimizerInt =
                         await FlutterInsider.Instance.getContentIntWithName(
                         "int_variable_name", 10, ContentOptimizerDataType.ELEMENT);
 
-                    print('[INSIDER][getContentIntWithName]: $contentOptimizerInt');
+                    logInsider('[INSIDER][getContentIntWithName]: $contentOptimizerInt');
               }),
             ),
           ],
@@ -61,7 +63,7 @@ class ContentOptimizer extends StatelessWidget {
                         "defaultValue",
                         ContentOptimizerDataType.ELEMENT);
 
-                    print('[INSIDER][getContentStringWithoutCache]: $contentOptimizerString');
+                    logInsider('[INSIDER][getContentStringWithoutCache]: $contentOptimizerString');
               }),
             ),
           ],

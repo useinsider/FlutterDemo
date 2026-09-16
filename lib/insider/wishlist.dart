@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -27,7 +29,7 @@ class Wishlist extends StatelessWidget {
 
                     FlutterInsider.Instance.itemAddedToWishlist(insiderProduct);
 
-                    print('[INSIDER][itemAddedToWishlist]: Method is triggered.');
+                    logInsider('[INSIDER][itemAddedToWishlist]: Method is triggered.');
               }),
             ),
           ],
@@ -43,7 +45,7 @@ class Wishlist extends StatelessWidget {
                     // --- ITEM REMOVED FROM WISHLIST --- //
                     FlutterInsider.Instance.itemRemovedFromWishlist("productID");
 
-                    print('[INSIDER][itemRemovedFromWishlist]: Method is triggered.');
+                    logInsider('[INSIDER][itemRemovedFromWishlist]: Method is triggered.');
               }),
             ),
           ],
@@ -59,7 +61,7 @@ class Wishlist extends StatelessWidget {
                     // --- WISHLIST CLEARED --- //
                     FlutterInsider.Instance.wishlistCleared();
 
-                    print('[INSIDER][wishlistCleared]: Method is triggered.');
+                    logInsider('[INSIDER][wishlistCleared]: Method is triggered.');
               }),
             ),
           ],
@@ -85,7 +87,7 @@ class Wishlist extends StatelessWidget {
 
                     FlutterInsider.Instance.visitWishlistPage(products);
 
-                    print('[INSIDER][visitWishlistPage]: Method is triggered.');
+                    logInsider('[INSIDER][visitWishlistPage]: Method is triggered.');
               }),
             ),
           ],

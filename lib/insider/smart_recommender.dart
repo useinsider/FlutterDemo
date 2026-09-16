@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -28,17 +30,17 @@ class SmartRecommender extends StatelessWidget {
                     Map? recommendationWithID =
                         await FlutterInsider.Instance.getSmartRecommendation(1, "tr_TR", "TRY");
 
-                    print("[INSIDER][getSmartRecommendation]: $recommendationWithID");
+                    logInsider("[INSIDER][getSmartRecommendation]: $recommendationWithID");
 
                     Map? recommendationWithProduct =
                         await FlutterInsider.Instance.getSmartRecommendationWithProduct(insiderExampleProduct, 1, "tr_TR");
 
-                    print("[INSIDER][getSmartRecommendationWithProduct]: $recommendationWithProduct");
+                    logInsider("[INSIDER][getSmartRecommendationWithProduct]: $recommendationWithProduct");
 
                     Map? recommendationWithProductIDs =
                         await FlutterInsider.Instance.getSmartRecommendationWithProductIDs(['X', 'Y', 'Z'], 1, "tr_TR", "TRY");
 
-                    print("[INSIDER][getSmartRecommendationWithProductIDs]: $recommendationWithProductIDs");
+                    logInsider("[INSIDER][getSmartRecommendationWithProductIDs]: $recommendationWithProductIDs");
               }),
             ),
           ],

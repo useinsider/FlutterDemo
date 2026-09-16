@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
 import 'package:flutter_demo/components/custom_button.dart';
 
 import 'package:flutter_insider/flutter_insider.dart';
@@ -39,7 +41,7 @@ class UserAttribute extends StatelessWidget {
                 // Custom Attributes
                 currentUser.setCustomAttributeWithBoolean("mobile_app_access", true);
 
-                print('[INSIDER][getCurrentUser]: Method is triggered.');
+                logInsider('[INSIDER][getCurrentUser]: Method is triggered.');
               }),
             ),
           ],

@@ -68,6 +68,21 @@ flutter:
   assets:
     - assets/images/
 
+  # Kufam is the type family the native Android and iOS demos use. The medium and
+  # semibold weights are the ones the design system calls for; regular backs the
+  # body copy so no text falls through to the platform default.
+  fonts:
+    - family: Kufam
+      fonts:
+        - asset: assets/fonts/Kufam-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Kufam-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Kufam-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Kufam-Bold.ttf
+          weight: 700
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

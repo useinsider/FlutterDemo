@@ -46,7 +46,7 @@ lib/
     ├── smart_recommender.dart, content_optimizer.dart
     ├── page_visit.dart, gdpr.dart, geofence.dart
     ├── in_app_messages.dart
-    └── message_center.dart, message_center_inbox_page.dart
+    └── app_cards.dart, app_cards_page.dart
 
 ios/
 ├── Podfile                          # Adds InsiderMobileAdvancedNotification to Runner in CocoaPods mode
