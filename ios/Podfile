@@ -1,7 +1,7 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '14.0'
+platform :ios, '15.6'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+require 'json'
+
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -16,7 +16,6 @@ def flutter_root
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
   end
-
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
@@ -24,29 +23,31 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+def swift_package_manager_enabled?
+  marker = File.expand_path(File.join('..', '..', '.flutter-plugins-dependencies'), __FILE__)
+  return false unless File.exist?(marker)
+  JSON.parse(File.read(marker)).dig('swift_package_manager_enabled', 'ios') == true
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  # Under SwiftPM the flutter_insider package embeds this framework itself.
+  pod "InsiderMobileAdvancedNotification" unless swift_package_manager_enabled?
+
+  target 'InsiderNotificationContent' do
+    inherit! :search_paths
+  end
+
+  target 'InsiderNotificationService' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
-end
-
-target 'InsiderNotificationContent' do
-  use_frameworks!
-  inherit! :search_paths
-  # Pods for InsiderNotificationContent
-  pod "InsiderMobileAdvancedNotification"
-end
-
-target 'InsiderNotificationService' do
-  use_frameworks!
-  inherit! :search_paths
-  # Pods for InsiderNotificationService
-  pod "InsiderMobileAdvancedNotification"
 end

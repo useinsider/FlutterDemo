@@ -56,3 +56,6 @@ pubspec.lock
 /ios/Podfile.lock
 
 .claude/settings.local.json
+.orbit-output/.log-reminded
+.orbit-output/.plan-mode-edits
+

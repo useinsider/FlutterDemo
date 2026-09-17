@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
+import 'package:flutter_demo/components/custom_button.dart';
+
+import 'package:flutter_insider/flutter_insider.dart';
+import 'package:flutter_insider/src/user.dart';
+import 'package:flutter_insider/src/identifiers.dart';
+
+class UserIdentifier extends StatelessWidget {
+  const UserIdentifier({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // --- USER IDENTIFIER --- //
+    return
+      Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: CustomButton(buttonText: 'Login', onPressed: () async {
+                  // Setting User Identifiers.
+                  FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
+                  FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers();
+
+                  identifiers.addEmail("mobile.test@useinsider.com");
+                  identifiers.addPhoneNumber("+909876543210");
+                  identifiers.addUserID("{crmID}");
+
+                  // Login
+                  currentUser.login(identifiers);
+
+                  logInsider('[INSIDER][login]: Method is triggered.');
+                }),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: CustomButton(buttonText: 'Logout',
+                    onPressed: () async {
+                    FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
+
+                    // Logout
+                    currentUser.logout();
+
+                    logInsider('[INSIDER][logout]: Method is triggered.');
+              }),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: CustomButton(buttonText: 'Logout Resetting Insider ID',
+                    onPressed: () async {
+                    FlutterInsiderUser currentUser = FlutterInsider.Instance.getCurrentUser()!;
+                    FlutterInsiderIdentifiers identifiers = FlutterInsiderIdentifiers();
+
+                    identifiers.addEmail("mobile.test@useinsider.com");
+                    identifiers.addPhoneNumber("+909876543210");
+                    identifiers.addUserID("{crmID}");
+
+                    List<FlutterInsiderIdentifiers> additionalIdentifiers = [identifiers];
+
+                    // Logout Resetting Insider ID with Identifiers
+                    currentUser.logoutResettingInsiderID(additionalIdentifiers);
+
+                    logInsider('[INSIDER][logoutResettingInsiderID]: Method is triggered.');
+              }),
+              ),
+            ],
+          ),
+        ],
+      );
+  }
+}

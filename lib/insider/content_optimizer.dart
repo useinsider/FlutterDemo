@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_demo/components/playground_console.dart';
+import 'package:flutter_demo/components/custom_button.dart';
+
+import 'package:flutter_insider/flutter_insider.dart';
+import 'package:flutter_insider/enum/ContentOptimizerDataType.dart';
+
+class ContentOptimizer extends StatelessWidget {
+  const ContentOptimizer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Get Variable With Content Optimizer',
+                  onPressed: () async {
+                    // --- CONTENT OPTIMIZER --- //
+
+                    var contentOptimizerString =
+                        await FlutterInsider.Instance.getContentStringWithName(
+                        "string_variable_name",
+                        "defaultValue",
+                        ContentOptimizerDataType.ELEMENT);
+
+                    logInsider('[INSIDER][getContentStringWithName]: $contentOptimizerString');
+
+                    // Boolean
+                    var contentOptimizerBool =
+                        await FlutterInsider.Instance.getContentBoolWithName(
+                        "bool_variable_name", true, ContentOptimizerDataType.ELEMENT);
+
+                    logInsider('[INSIDER][getContentBoolWithName]: $contentOptimizerBool');
+
+                    // Integer
+                    var contentOptimizerInt =
+                        await FlutterInsider.Instance.getContentIntWithName(
+                        "int_variable_name", 10, ContentOptimizerDataType.ELEMENT);
+
+                    logInsider('[INSIDER][getContentIntWithName]: $contentOptimizerInt');
+              }),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: CustomButton(buttonText: 'Get Variable Without Cache',
+                  onPressed: () async {
+                    // --- CONTENT OPTIMIZER WITHOUT CACHE --- //
+
+                    var contentOptimizerString =
+                        await FlutterInsider.Instance.getContentStringWithoutCache(
+                        "variableName",
+                        "defaultValue",
+                        ContentOptimizerDataType.ELEMENT);
+
+                    logInsider('[INSIDER][getContentStringWithoutCache]: $contentOptimizerString');
+              }),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
