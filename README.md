@@ -46,11 +46,12 @@ lib/
     ├── smart_recommender.dart, content_optimizer.dart
     ├── page_visit.dart, gdpr.dart, geofence.dart
     ├── in_app_messages.dart
-    └── app_cards.dart, app_cards_page.dart
+    ├── app_cards.dart, app_cards_page.dart
+    └── app_frames_page.dart         # InsiderAppFramesView per placement
 
 ios/
 ├── Podfile                          # Adds InsiderMobileAdvancedNotification to Runner in CocoaPods mode
-├── Runner/                          # AppDelegate, SceneDelegate, Info.plist, entitlements
+├── Runner/                          # AppDelegate, SceneDelegate, Info.plist (App Frames opt-in), entitlements
 ├── InsiderNotificationService/      # Rich push (Service Extension)
 │   └── NotificationService.swift
 └── InsiderNotificationContent/      # Interactive push (Content Extension)
@@ -65,7 +66,7 @@ android/
     ├── google-services.json         # Firebase (git-ignored, you provide it)
     ├── agconnect-services.json      # Huawei (git-ignored, you provide it)
     └── src/main/
-        ├── AndroidManifest.xml      # Permissions, launcher activity
+        ├── AndroidManifest.xml      # Permissions, launcher activity, App Frames opt-in
         └── kotlin/.../MainActivity.kt
 ```
 
@@ -162,7 +163,7 @@ flutter config --enable-swift-package-manager
 flutter pub get
 ```
 
-Flutter generates a Swift package that depends on the `flutter_insider` package, which in turn resolves the native SDKs from [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK). `flutter build ios` still runs `pod install` for the remaining CocoaPods integration; that is expected.
+Flutter generates a Swift package that depends on the `flutter_insider` package, which in turn resolves the native SDKs from [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK). `flutter build ios` still runs `pod install` for the remaining CocoaPods integration; that is expected. See [Swift Package Manager](#swift-package-manager-ios) for what changes under this channel.
 
 </details>
 
@@ -235,6 +236,28 @@ open ios/Runner.xcworkspace
 
 To work from Android Studio, open the project root with the Flutter plugin installed, or open the `android` folder for Gradle-only work.
 
+## Swift Package Manager (iOS)
+
+`flutter_insider` ships both a podspec and a `Package.swift`, so the plugin works with whichever dependency manager Flutter uses. Nothing in the Dart code changes.
+
+**Turning it on.** Swift Package Manager is on by default from Flutter 3.44. On Flutter 3.24–3.43, enable it once:
+
+```bash
+flutter config --enable-swift-package-manager
+flutter config --list | grep swift   # enable-swift-package-manager: true
+```
+
+**What changes.**
+
+- Flutter resolves the plugin's Swift package itself; the plugin needs no `pod install`. `pod install` still runs for any remaining CocoaPods dependencies.
+- The iOS deployment floor of the plugin is `12.0` under Swift Package Manager and `12.2` under CocoaPods. This demo targets `15.6`, above both.
+- The native Insider SDK version comes from a different place on each channel: CocoaPods installs the exact pods pinned in the plugin's podspec, while Swift Package Manager follows the [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK) package. The two can name different native versions between plugin releases.
+
+**Notification extensions.** Under Swift Package Manager the plugin's package embeds `InsiderMobileAdvancedNotification` in the app, and Xcode passes the package's framework search path to every target, so both extensions link it with a plain `import`. Two things need attention when you adopt it in your own app:
+
+- Do not also add the `InsiderMobileAdvancedNotification` pod under Swift Package Manager. If CocoaPods embeds the same framework, the build fails with `Multiple commands produce …InsiderMobileAdvancedNotification.framework`. This demo's [`ios/Podfile`](ios/Podfile) adds the pod only `unless swift_package_manager_enabled?`. When you upgrade an app that already builds with Swift Package Manager, remove the pod from the `Podfile` in the same change.
+- The content extension's `InsiderInterface.storyboard` is not exported by the Swift package, so nothing links it for you. Copy it into the content extension target, as this demo does with [`ios/InsiderNotificationContent/InsiderInterface.storyboard`](ios/InsiderNotificationContent/InsiderInterface.storyboard).
+
 ## SDK Initialization
 
 The SDK is initialized once, in Dart, for both platforms. See [`lib/main.dart`](lib/main.dart):
@@ -271,16 +294,85 @@ Future initInsider() async {
 }
 ```
 
+## App Frames
+
+App Frames render a panel-managed campaign inside a slot of your own screen. Each slot is a **placement**: you choose its id in the app, define the same id in the Insider panel, and target campaigns at it. The demo's App Frames screen (Playground → mini-apps → **App Frames**) hosts one `InsiderAppFramesView` per placement you add, so any placement can be tried without code changes.
+
+### Enable the feature
+
+App Frames are an opt-in on both platforms. Without the flag the view reports `disabled` and renders nothing.
+
+Android, inside `<application>` in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml):
+
+```xml
+<meta-data
+    android:name="com.useinsider.insider.APP_FRAMES_ENABLED"
+    android:value="true" />
+```
+
+iOS, in the top-level `Insider` dictionary of [`ios/Runner/Info.plist`](ios/Runner/Info.plist):
+
+```xml
+<key>Insider</key>
+<dict>
+    <key>App Frames Enabled</key>
+    <true/>
+</dict>
+```
+
+### Use the view
+
+```dart
+import 'package:flutter_insider/flutter_insider.dart';
+
+InsiderAppFramesView(
+  placementId: 'home_page',
+  onStatusChanged: (status, previousStatus) {
+    // resolving → downloading → rendering → ready
+    debugPrint('App Frames: ${status.name}');
+  },
+  onLoadFailed: (error) {
+    debugPrint('App Frames failed: ${error.code.name}: ${error.message}');
+  },
+)
+```
+
+The view sizes itself from the template's reported height and collapses when there is nothing to show. Mounting it subscribes the placement; removing it from the tree unsubscribes.
+
+### Try it in the demo
+
+1. Create a placement in the panel and an active App Frames campaign that targets it.
+2. Open **App Frames**, type the placement id and tap **+ Add Placement**.
+3. Watch the card's status chip: it shows the latest `InsiderAppFramesViewStatus` (`resolving`, `downloading`, `rendering`, `ready`, `unavailable`, `disabled`, …). On a load failure it shows the error as `<code>: <message>` instead.
+4. **Detach** removes the view from the card; **Attach** mounts a fresh one; **Delete** removes the placement.
+
 ## Push Notifications
 
-### iOS: Notification Extensions
+### iOS: Rich Push (Notification Extensions)
 
-The SDK requires two notification extensions on iOS for full push notification support:
+Rich push covers image and video attachments and interactive carousel notifications. The SDK requires two notification extensions on iOS for full support:
 
 - **Notification Service Extension** — Intercepts incoming push notifications to download rich media (images, videos) before display. See [`ios/InsiderNotificationService/NotificationService.swift`](ios/InsiderNotificationService/NotificationService.swift).
 - **Notification Content Extension** — Provides an interactive carousel UI for expanded push notifications. See [`ios/InsiderNotificationContent/NotificationViewController.swift`](ios/InsiderNotificationContent/NotificationViewController.swift).
 
-Both extensions must share the same **App Group** identifier as the main app target. Refer to the source files for the complete implementation.
+Both extensions must share the same **App Group** identifier as the main app target, and the same value must be passed as the second argument of `FlutterInsider.Instance.init`. Replace the `appGroup` constant marked `FIXME-INSIDER` in both extension sources with your own. Refer to the source files for the complete implementation.
+
+The service extension handles only payloads that carry `"source": "Insider"` and leaves room for other providers in its `else` branch. The texts of the carousel controls are set there and can be customised:
+
+```swift
+InsiderPushNotification.showInsiderRichPush(
+    bestAttemptContent,
+    appGroup: appGroup,
+    nextButtonText: ">>",
+    goToAppText: "Launch App",
+    success: { attachment in
+        if let attachment { bestAttemptContent.attachments = [attachment] }
+        contentHandler(bestAttemptContent)
+    }
+)
+```
+
+How the extensions link `InsiderMobileAdvancedNotification` depends on the dependency manager; see [Swift Package Manager](#swift-package-manager-ios).
 
 The Notification Content Extension's `Info.plist` must include the following entries:
 
@@ -311,7 +403,7 @@ The storyboard references `NotificationViewController` without a module. The Swi
 
 ### Android: Firebase and Huawei
 
-No messaging service code is needed in the app. The `flutter_insider` plugin depends on Firebase Cloud Messaging and Huawei Push and hands Insider messages to the SDK itself; you only supply the configuration files:
+Rich push needs no extra setup on Android: the Insider SDK builds the notification, including image and carousel content, itself. No messaging service code is needed in the app. The `flutter_insider` plugin depends on Firebase Cloud Messaging and Huawei Push and hands Insider messages to the SDK itself; you only supply the configuration files:
 
 - `android/app/google-services.json` — read by the Google Services plugin at build time.
 - `android/app/agconnect-services.json` — read by the AppGallery Connect plugin at build time.
