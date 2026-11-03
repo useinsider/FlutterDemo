@@ -305,6 +305,21 @@ void main() {
       expect(chipOf('b', 'Idle'), findsOneWidget);
     });
 
+    testWidgets('deleting a card keeps the next card\'s frame alive',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'a');
+      await addPlacement(tester, 'b');
+      final int viewIdB = platformViews.createdViewIds.last;
+
+      await tester.tap(find.text('Delete').first);
+      await tester.pumpAndSettle();
+
+      expect(platformViews.createdViewIds.length, 2);
+      await emitStatus(tester, viewIdB, 'ready');
+      expect(chipOf('b', 'ready'), findsOneWidget);
+    });
+
     testWidgets('events after delete are ignored', (WidgetTester tester) async {
       await pumpPage(tester);
       await addPlacement(tester, 'home_page');

@@ -130,6 +130,7 @@ class _AppFramesPageState extends State<AppFramesPage> {
 
             for (final String placementId in _placements)
               _PlacementCard(
+                key: ValueKey<String>(placementId),
                 placementId: placementId,
                 attached: _attached[placementId] ?? false,
                 status: _chipLabel(placementId),
@@ -162,6 +163,7 @@ class _PlacementCard extends StatelessWidget {
   final ValueChanged<InsiderAppFramesError> onLoadFailed;
 
   const _PlacementCard({
+    super.key,
     required this.placementId,
     required this.attached,
     required this.status,
