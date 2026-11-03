@@ -502,6 +502,7 @@ import 'package:flutter_insider/flutter_insider.dart';
 import 'package:flutter_insider/enum/ContentOptimizerDataType.dart';
 import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
 import 'package:flutter_insider/enum/InsiderGender.dart';
+import 'package:flutter_insider/src/identifiers.dart'; // FlutterInsiderIdentifiers is not re-exported
 
 final insider = FlutterInsider.Instance;
 ```
@@ -796,16 +797,16 @@ try {
   await card.click();
   await card.buttons!.first.click();
   await card.delete();
+
+  // Actions: InsiderAppCardDeeplinkAction (url, deeplinkType, json,
+  // keysAndValues), InsiderAppCardOpenSettingsAction, InsiderAppCardFeedbackAction.
+  final action = card.action;
+  if (action is InsiderAppCardDeeplinkAction) {
+    print('${action.deeplinkType}: ${action.url}');
+    // deeplinkType: InsiderAppCardDeeplinkType.URL_SCHEME / INTERNAL / EXTERNAL / UNKNOWN
+  }
 } on InsiderAppCardsException catch (e) {
   print('${e.error.code}: ${e.error.message}');
-}
-
-// Actions: InsiderAppCardDeeplinkAction (url, deeplinkType, json,
-// keysAndValues), InsiderAppCardOpenSettingsAction, InsiderAppCardFeedbackAction.
-final action = card.action;
-if (action is InsiderAppCardDeeplinkAction) {
-  print('${action.deeplinkType}: ${action.url}');
-  // deeplinkType: InsiderAppCardDeeplinkType.URL_SCHEME / INTERNAL / EXTERNAL / UNKNOWN
 }
 ```
 
