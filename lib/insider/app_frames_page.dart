@@ -83,6 +83,7 @@ class _AppFramesPageState extends State<AppFramesPage> {
     String placementId,
     InsiderAppFramesViewStatus status,
   ) {
+    if (_attached[placementId] != true) return;
     setState(() {
       _frameStatus[placementId] = status;
       if (!status.isError) _frameError.remove(placementId);
@@ -90,6 +91,7 @@ class _AppFramesPageState extends State<AppFramesPage> {
   }
 
   void _onFrameLoadFailed(String placementId, InsiderAppFramesError error) {
+    if (_attached[placementId] != true) return;
     setState(() => _frameError[placementId] = error);
   }
 
@@ -257,12 +259,16 @@ class _StatusChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 9),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: InsiderColors.onSurface,
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: InsiderColors.onSurface,
+                ),
               ),
             ),
           ],

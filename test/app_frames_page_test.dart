@@ -400,4 +400,58 @@ void main() {
       expect(chipOf('home_page', 'resolutionFailed: boom'), findsNothing);
     });
   });
+
+  group('late frame events', () {
+    testWidgets('a status that lands after Detach does not reach the chip',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await tester.tap(find.text('Detach'));
+      await emitAppFramesCall(viewId, 'onStatusChanged', <String, Object?>{
+        'status': 'ready',
+        'previousStatus': 'rendering',
+      });
+      await tester.pumpAndSettle();
+
+      expect(chipOf('home_page', 'Detached'), findsOneWidget);
+    });
+
+    testWidgets(
+        'a status that lands after Delete does not reach a re-added card',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await tester.tap(find.text('Delete'));
+      await emitAppFramesCall(viewId, 'onLoadFailed', <String, Object?>{
+        'code': 'resolutionFailed',
+        'message': 'boom',
+      });
+      await tester.pumpAndSettle();
+      await addPlacement(tester, 'home_page');
+
+      expect(chipOf('home_page', 'Idle'), findsOneWidget);
+    });
+  });
+
+  group('status chip', () {
+    testWidgets('a long load error does not overflow a narrow card',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await emitLoadFailed(tester, viewId, 'unknown',
+          'An unexpected error occurred while resolving the placement.');
+
+      expect(tester.takeException(), isNull);
+    });
+  });
 }
