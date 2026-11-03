@@ -332,5 +332,72 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byType(Card), findsNothing);
     });
+
+    testWidgets('detach replaces the last frame status with Detached',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await emitStatus(tester, viewId, 'ready');
+      expect(chipOf('home_page', 'ready'), findsOneWidget);
+
+      await tester.tap(find.text('Detach'));
+      await tester.pumpAndSettle();
+
+      expect(chipOf('home_page', 'Detached'), findsOneWidget);
+      expect(chipOf('home_page', 'ready'), findsNothing);
+    });
+
+    testWidgets('detach replaces the load error with Detached',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await emitLoadFailed(tester, viewId, 'resolutionFailed', 'boom');
+      expect(chipOf('home_page', 'resolutionFailed: boom'), findsOneWidget);
+
+      await tester.tap(find.text('Detach'));
+      await tester.pumpAndSettle();
+
+      expect(chipOf('home_page', 'Detached'), findsOneWidget);
+      expect(chipOf('home_page', 'resolutionFailed: boom'), findsNothing);
+    });
+
+    testWidgets(
+        'a re-added placement does not inherit the deleted frame status',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await emitStatus(tester, viewId, 'ready');
+      expect(chipOf('home_page', 'ready'), findsOneWidget);
+
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+      await addPlacement(tester, 'home_page');
+
+      expect(chipOf('home_page', 'Idle'), findsOneWidget);
+      expect(chipOf('home_page', 'ready'), findsNothing);
+    });
+
+    testWidgets('a re-added placement does not inherit the deleted load error',
+        (WidgetTester tester) async {
+      await pumpPage(tester);
+      await addPlacement(tester, 'home_page');
+      final int viewId = platformViews.createdViewIds.single;
+
+      await emitLoadFailed(tester, viewId, 'resolutionFailed', 'boom');
+      expect(chipOf('home_page', 'resolutionFailed: boom'), findsOneWidget);
+
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+      await addPlacement(tester, 'home_page');
+
+      expect(chipOf('home_page', 'Idle'), findsOneWidget);
+      expect(chipOf('home_page', 'resolutionFailed: boom'), findsNothing);
+    });
   });
 }
