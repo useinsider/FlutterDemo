@@ -20,6 +20,20 @@ This project demonstrates how to integrate the [Insider Flutter SDK](https://aca
 
 The app includes working examples of every major SDK feature, the two iOS push notification extensions, and Firebase / Huawei push on Android.
 
+## Contents
+
+- [Requirements](#requirements)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Swift Package Manager (iOS)](#swift-package-manager-ios)
+- [SDK Initialization](#sdk-initialization)
+- [App Frames](#app-frames)
+- [Push Notifications](#push-notifications)
+- [Firebase Messaging alongside Insider](#firebase-messaging-alongside-insider)
+- [Runtime Permissions (Android)](#runtime-permissions-android)
+- [Public API Usage](#public-api-usage)
+- [License](#license)
+
 ## Requirements
 
 | Requirement | Minimum |
@@ -478,6 +492,385 @@ The demo declares them in [`android/app/src/main/AndroidManifest.xml`](android/a
 ```
 
 `registerWithQuietPermission(false)` in the initialization above triggers the push permission prompt. Location permissions must be requested by the app before calling `startTrackingGeofence()`; use a package such as `permission_handler` for that in your own app.
+
+## Public API Usage
+
+Every public call of `flutter_insider` 5.5.0, grouped by area. All calls go through the `FlutterInsider.Instance` singleton unless noted. Values in the snippets are examples.
+
+```dart
+import 'package:flutter_insider/flutter_insider.dart';
+import 'package:flutter_insider/enum/ContentOptimizerDataType.dart';
+import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
+import 'package:flutter_insider/enum/InsiderGender.dart';
+
+final insider = FlutterInsider.Instance;
+```
+
+### Initialization
+
+```dart
+// partnerName, appGroup (iOS), callback(type, data); appIdentifier is optional.
+await insider.init('your_partner_name', 'group.com.example.app',
+    (int type, dynamic data) {
+  if (type == InsiderCallbackAction.NOTIFICATION_OPEN) { /* push opened */ }
+}, appIdentifier: 'com.example.app');
+
+// Same, against a custom endpoint.
+await insider.initWithCustomEndpoint('your_partner_name',
+    'group.com.example.app', 'https://custom.endpoint.example', (type, data) {});
+
+// Switch to another partner at runtime.
+await insider.reinitWithPartnerName('another_partner');
+```
+
+Callback types (`InsiderCallbackAction`): `NOTIFICATION_OPEN`, `INAPP_BUTTON_CLICK`, `TEMP_STORE_PURCHASE`, `TEMP_STORE_ADDED_TO_CART`, `TEMP_STORE_CUSTOM_ACTION`, `INAPP_SEEN`, `SESSION_STARTED`.
+
+`initFlutterBase` and `registerEventChannel` are public only because `init` uses them; call `init` / `initWithCustomEndpoint` instead.
+
+### Insider ID
+
+```dart
+final String? insiderID = await insider.getInsiderID();
+await insider.registerInsiderIDListener((insiderID) => print(insiderID));
+```
+
+### User attributes
+
+`getCurrentUser()` returns a `FlutterInsiderUser`; every setter returns the user, so calls chain.
+
+```dart
+final user = insider.getCurrentUser()!;
+
+user
+  ..setName('Jane')
+  ..setSurname('Doe')
+  ..setEmail('jane@example.com')
+  ..setPhoneNumber('+905551112233')
+  ..setAge(30)
+  ..setGender(InsiderGender.FEMALE) // MALE, FEMALE, OTHER
+  ..setBirthday(DateTime(1995, 4, 12))
+  ..setLanguage('en')
+  ..setLocale('en_US')
+  ..setFacebookID('fb-123')
+  ..setTwitterID('tw-123');
+
+// Opt-ins
+user
+  ..setEmailOptin(true)
+  ..setSMSOptin(true)
+  ..setPushOptin(true)
+  ..setLocationOptin(true)
+  ..setWhatsappOptin(false)
+  ..setPromotionalOptin(true);
+
+// Custom attributes
+user
+  ..setCustomAttributeWithString('membership', 'gold')
+  ..setCustomAttributeWithInt('visits', 12)
+  ..setCustomAttributeWithDouble('score', 4.5)
+  ..setCustomAttributeWithBoolean('vip', true)
+  ..setCustomAttributeWithDate('last_order', DateTime.now())
+  ..setCustomAttributeWithArray('interests', ['shoes', 'bags'])
+  ..unsetCustomAttribute('membership');
+
+// Object-array custom attributes
+user
+  ..addObjectsToCustomAttribute('addresses', [
+    {'id': 'home', 'city': 'Istanbul'},
+  ])
+  ..mergeObjectsInCustomAttribute(
+      'addresses', {'id': 'home'}, {'city': 'Ankara'})
+  ..removeObjectsFromCustomAttribute('addresses', {'id': 'home'})
+  ..removeObjectsFromCustomAttribute('addresses'); // omitting the match clears the whole attribute
+```
+
+### Login and logout
+
+```dart
+final identifiers = FlutterInsiderIdentifiers()
+  ..addEmail('jane@example.com')
+  ..addPhoneNumber('+905551112233')
+  ..addUserID('user-42')
+  ..addCustomIdentifier('loyalty_id', 'L-9');
+final Map? raw = identifiers.getIdentifiers();
+
+user.login(identifiers, insiderIDResult: (id) => print(id));
+final String? idAfterLogin = await user.loginAsync(identifiers,
+    timeout: const Duration(seconds: 10));
+
+await user.logout();
+
+user.logoutResettingInsiderID([identifiers], insiderIDResult: (id) {});
+final String? idAfterReset = await user.logoutResettingInsiderIDAsync(null,
+    timeout: const Duration(seconds: 10));
+```
+
+### Events
+
+`tagEvent` returns a `FlutterInsiderEvent`; add parameters, then `build()` sends it.
+
+```dart
+await insider
+    .tagEvent('video_watched')
+    .addParameterWithString('title', 'Trailer')
+    .addParameterWithInt('seconds', 42)
+    .addParameterWithDouble('progress', 0.7)
+    .addParameterWithBoolean('completed', false)
+    .addParameterWithDate('watched_at', DateTime.now())
+    .addParameterWithStringArray('tags', ['action', 'new'])
+    .addParameterWithArray('genres', ['drama'])
+    .addParameterWithNumericArray('ratings', [4, 4.5])
+    .addParameterWithObjectArray('items', [
+      {'id': 'p1', 'qty': 2},
+    ])
+    .build();
+
+await insider.signUpConfirmation(customParameters: {'source': 'demo'});
+```
+
+### Products
+
+`createNewProduct(productID, name, taxonomy, imageURL, price, currency)` returns a `FlutterInsiderProduct`; every setter returns the product.
+
+```dart
+final product = insider.createNewProduct('sku-1', 'Sneaker',
+    ['Shoes', 'Running'], 'https://example.com/sneaker.png', 99.9, 'USD')
+  ..setColor('red')
+  ..setSize('42')
+  ..setBrand('Acme')
+  ..setGender('unisex')
+  ..setDescription('Lightweight running shoe')
+  ..setSku('ACME-42-RED')
+  ..setGtin('0123456789012')
+  ..setGroupCode('SNEAKER')
+  ..setMultipack('1')
+  ..setProductType('footwear')
+  ..setProductURL('https://example.com/p/sku-1')
+  ..setTags(['summer', 'sale'])
+  ..setInStock(true)
+  ..setStock(10)
+  ..setQuantity(1)
+  ..setSalePrice(79.9)
+  ..setShippingCost(4.99)
+  ..setVoucherName('WELCOME')
+  ..setVoucherDiscount(10)
+  ..setPromotionName('Summer')
+  ..setPromotionDiscount(5)
+  ..setCustomAttributeWithString('material', 'mesh')
+  ..setCustomAttributeWithInt('weight_g', 240)
+  ..setCustomAttributeWithDouble('rating', 4.6)
+  ..setCustomAttributeWithBoolean('eco', true)
+  ..setCustomAttributeWithDate('released', DateTime(2026, 3, 1))
+  ..setCustomAttributeWithArray('fits', ['wide'])
+  ..setCustomAttributeWithStringArray('colors', ['red', 'black'])
+  ..setCustomAttributeWithNumericArray('sizes', [41, 42, 43]);
+
+// Read-only helpers on the product
+final bool sendable = product.hasSendablePrice;
+final Map<String, dynamic> required = product.productMustMap;
+final Map<String, dynamic> optional = product.productOptMap;
+```
+
+### Page visits
+
+Every page-visit call takes optional `customParameters`.
+
+```dart
+await insider.visitHomePage(customParameters: {'campaign': 'spring'});
+await insider.visitListingPage(['Shoes', 'Running']);
+await insider.visitProductDetailPage(product);
+await insider.visitCartPage([product], saleID: 'sale-1');
+await insider.visitWishlistPage([product]);
+```
+
+### Cart, purchase and wishlist
+
+```dart
+await insider.itemAddedToCart(product);
+await insider.itemRemovedFromCart('sku-1', saleID: 'sale-1');
+await insider.cartCleared();
+await insider.itemPurchased('unique-sale-id', product,
+    customParameters: {'payment': 'card'});
+
+await insider.itemAddedToWishlist(product);
+await insider.itemRemovedFromWishlist('sku-1');
+await insider.wishlistCleared();
+```
+
+### Smart recommendations
+
+```dart
+final Map? recs = await insider.getSmartRecommendation(1, 'en_US', 'USD');
+final Map? similar =
+    await insider.getSmartRecommendationWithProduct(product, 1, 'en_US');
+final Map? byIDs = await insider.getSmartRecommendationWithProductIDs(
+    ['sku-1', 'sku-2'], 1, 'en_US', 'USD');
+await insider.clickSmartRecommendationProduct(1, product);
+```
+
+### Content optimizer
+
+`dataType` is `ContentOptimizerDataType.CONTENT` or `ContentOptimizerDataType.ELEMENT`.
+
+```dart
+final String? title = await insider.getContentStringWithName(
+    'home_title', 'Welcome', ContentOptimizerDataType.CONTENT);
+final int? columns = await insider.getContentIntWithName(
+    'grid_columns', 2, ContentOptimizerDataType.ELEMENT);
+final bool? showBanner = await insider.getContentBoolWithName(
+    'show_banner', false, ContentOptimizerDataType.ELEMENT);
+
+// Bypass the SDK cache
+await insider.getContentStringWithoutCache(
+    'home_title', 'Welcome', ContentOptimizerDataType.CONTENT);
+await insider.getContentIntWithoutCache(
+    'grid_columns', 2, ContentOptimizerDataType.ELEMENT);
+await insider.getContentBoolWithoutCache(
+    'show_banner', false, ContentOptimizerDataType.ELEMENT);
+
+await insider.markContentOptimizerAsSeen('home_title');
+```
+
+### Push notifications
+
+```dart
+await insider.registerWithQuietPermission(false); // false: show the prompt
+await insider.setActiveForegroundPushView();      // iOS: show pushes in foreground
+await insider.setForegroundPushCallback((Map<String, dynamic> push) {});
+await insider.setPushToken('fcm-or-apns-token');
+await insider.handleNotification({'data': {'source': 'Insider'}});
+await insider.triggerPushProcessWithNotificationData({'source': 'Insider'});
+```
+
+### In-app messages, links and internal browser
+
+```dart
+await insider.disableInAppMessages();
+await insider.enableInAppMessages();
+await insider.removeInapp();
+
+await insider.handleUniversalLink('https://example.com/promo');
+
+// LEFT, RIGHT or NONE
+await insider.setInternalBrowserCloseButtonPosition(
+    insider.closeButtonPosition.RIGHT);
+```
+
+### Message center
+
+```dart
+final List? messages = await insider.getMessageCenterData(
+    DateTime.now().subtract(const Duration(days: 30)), DateTime.now(), 20);
+final List? userMessages = await insider.getMessageCenterDataWithIdentifiers(
+    DateTime.now().subtract(const Duration(days: 30)), DateTime.now(),
+    identifiers, 20);
+```
+
+### App Cards
+
+`appCards` returns a `FlutterInsiderAppCards`. Calls that fail with a recoverable platform error throw an `InsiderAppCardsException` whose `error` carries an `InsiderAppCardsErrorCode` (`unknown`, `sdkNotInitialized`, `invalidParameter`, `networkError`, `serverError`, `parseError`) and a `message`.
+
+```dart
+final appCards = insider.appCards;
+
+try {
+  final InsiderAppCardCampaignsResponse? response =
+      await appCards.getCampaigns();
+  final List<InsiderAppCard> cards = response?.appCards ?? [];
+  final InsiderAppCard card = cards.first;
+  // card.id, card.type (InsiderAppCardType.MESSAGE / IMAGE), card.isRead,
+  // card.content?.title, card.images, card.buttons, card.action, card.categories
+
+  // By id list on the manager…
+  await appCards.markAsRead([card.id]);
+  await appCards.markAsUnread([card.id]);
+  await appCards.view(card);
+  await appCards.click(card);
+  await appCards.clickButton(card.buttons!.first);
+  await appCards.delete([card.id]);
+
+  // …or on the card and button themselves.
+  await card.markAsRead();
+  await card.markAsUnread();
+  await card.view();
+  await card.click();
+  await card.buttons!.first.click();
+  await card.delete();
+} on InsiderAppCardsException catch (e) {
+  print('${e.error.code}: ${e.error.message}');
+}
+
+// Actions: InsiderAppCardDeeplinkAction (url, deeplinkType, json,
+// keysAndValues), InsiderAppCardOpenSettingsAction, InsiderAppCardFeedbackAction.
+final action = card.action;
+if (action is InsiderAppCardDeeplinkAction) {
+  print('${action.deeplinkType}: ${action.url}');
+  // deeplinkType: InsiderAppCardDeeplinkType.URL_SCHEME / INTERNAL / EXTERNAL / UNKNOWN
+}
+```
+
+Every App Card model also has `toMap()` and a static `fromMap(...)` for serialisation.
+
+### App Frames
+
+See [App Frames](#app-frames) for setup. The full widget surface:
+
+```dart
+InsiderAppFramesView(
+  placementId: 'home_page',
+  height: null,                 // fixed height; null sizes from the template
+  collapseOnDismiss: true,      // collapse to zero height on dismiss
+  gestureRecognizers: null,     // defaults to taps only
+  onStatusChanged: (status, previousStatus) {
+    if (status.isLoading) { /* resolving, downloading, rendering */ }
+    if (status.isError) { /* errorResolving, errorDownloading, errorRendering */ }
+  },
+  onLoadFailed: (InsiderAppFramesError error) {
+    // error.code (InsiderAppFramesErrorCode), error.message,
+    // error.dismissCode, error.cause
+  },
+  onHeightChanged: (double height) {},
+  onDismissRequested: () {},
+  onActionTriggered: (Map<String, dynamic> actionData) {},
+)
+```
+
+`InsiderAppFramesViewStatus`: `detached`, `noPlacement`, `disabled`, `resolving`, `downloading`, `rendering`, `unavailable`, `ready`, `dismissed`, `errorResolving`, `errorDownloading`, `errorRendering`, `unknown`.
+`InsiderAppFramesErrorCode`: `unknown`, `resolutionFailed`, `responseMalformed`, `downloadingFailed`, `placementUntrusted`, `contentDisplayFailed`, `renderingFailed`.
+
+### Event listener
+
+`events` returns a `FlutterInsiderEvents` that reports every event the SDK records.
+
+```dart
+final InsiderEventSubscription subscription =
+    await insider.events.addObserver((InsiderRecordedEvent event) {
+  print('${event.name} ${event.parameters} at ${event.recordedAt}');
+});
+
+if (!subscription.isCancelled) {
+  await subscription.cancel();
+}
+```
+
+### Privacy, consent and data collection
+
+```dart
+await insider.setGDPRConsent(true);
+await insider.setMobileAppAccess(true);
+
+await insider.enableIDFACollection(true);     // iOS
+await insider.enableIpCollection(true);
+await insider.enableCarrierCollection(true);
+await insider.enableLocationCollection(true);
+```
+
+### Geofencing
+
+```dart
+await insider.startTrackingGeofence();
+await insider.setAllowsBackgroundLocationUpdates(true);
+```
 
 ## License
 
