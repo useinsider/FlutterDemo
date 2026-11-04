@@ -40,7 +40,7 @@ The app includes working examples of every major SDK feature, the two iOS push n
 |---|---|
 | Flutter | 3.38 (UIScene app delegate, `FlutterImplicitEngineDelegate`) |
 | Dart | The version bundled with Flutter (`flutter_lints` 6 needs 3.8+) |
-| iOS | 15.6, Xcode 15 |
+| iOS | 15.6, Xcode 26.4 |
 | Android | API 24 (Android 7.0), compile SDK 36, target SDK from Flutter (`flutter.targetSdkVersion`) |
 | Android Gradle Plugin | 8.13 (Gradle 9.1) |
 | JDK | 17 |
@@ -219,7 +219,7 @@ end
 
 #### Android
 
-No extra steps: the Gradle wrapper downloads itself on first build and the `flutter_insider` plugin declares the native SDKs (`com.useinsider:insider`, `com.useinsider:insiderhybrid`, Firebase Messaging, Play Services Location, Huawei Push / Location). The Insider and Huawei Maven repositories are already declared in [`android/build.gradle`](android/build.gradle):
+No extra steps: the Gradle wrapper downloads itself on first build and the `flutter_insider` plugin declares the native SDKs (`com.useinsider:insider`, Firebase Messaging, Play Services Location, Huawei Push / Location). The Insider and Huawei Maven repositories are already declared in [`android/build.gradle`](android/build.gradle):
 
 ```groovy
 allprojects {
