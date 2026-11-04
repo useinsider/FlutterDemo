@@ -15,8 +15,8 @@
 
 This project demonstrates how to integrate the [Insider Flutter SDK](https://academy.insiderone.com/docs/flutter-integration) into a Flutter application on **iOS** and **Android**. One Dart codebase drives both platforms; the `flutter_insider` plugin brings the native Insider SDKs with it. 
 
-- On iOS; the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**.
-- On Android; they come from the Insider Maven repository through Gradle. 
+- On iOS, the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**.
+- On Android, they come from the Insider Maven repository through Gradle. 
 
 The app includes working examples of every major SDK feature, the two iOS push notification extensions, and Firebase / Huawei push on Android.
 
@@ -38,10 +38,10 @@ The app includes working examples of every major SDK feature, the two iOS push n
 
 | Requirement | Minimum |
 |---|---|
-| Flutter | 3.24 (Swift Package Manager support) |
-| Dart | 3.0 |
+| Flutter | 3.38 (UIScene app delegate, `FlutterImplicitEngineDelegate`) |
+| Dart | The version bundled with Flutter (`flutter_lints` 6 needs 3.8+) |
 | iOS | 15.6, Xcode 15 |
-| Android | API 24 (Android 7.0), compile and target SDK 36 |
+| Android | API 24 (Android 7.0), compile SDK 36, target SDK from Flutter (`flutter.targetSdkVersion`) |
 | Android Gradle Plugin | 8.13 (Gradle 9.1) |
 | JDK | 17 |
 
@@ -54,6 +54,7 @@ lib/
 ├── firebase/
 │   └── insider_push_bridge.dart     # Routes Firebase messages to Insider or the app
 ├── components/                      # Shared widgets
+├── theme/                           # Colors and theme
 └── insider/                         # One page per SDK feature
     ├── user_attribute.dart, user_identifier.dart
     ├── event.dart, product.dart, purchase.dart, wishlist.dart
@@ -107,7 +108,7 @@ Without this step the app still runs; Firebase is skipped with a `[FCM] Firebase
 
 ### 2. Configure Your App
 
-Every value you must replace is marked with a `FIXME-INSIDER` comment; search for that key to find them all.
+The values you must replace in Dart, Swift and Gradle sources are marked with a `FIXME-INSIDER` comment; search for that key to find them. The iOS URL scheme in `ios/Runner/Info.plist`, the App Group in the three `.entitlements` files and the bundle identifiers in the Xcode project carry no marker; they are covered in the iOS steps below.
 
 #### Dart (both platforms)
 
@@ -124,6 +125,7 @@ await FlutterInsider.Instance.init(
 1. **App Group** identifier in all of these files. It must be identical everywhere, and the App Groups capability must be enabled for all three bundle identifiers in your Apple Developer account:
    - `appGroup` in [`ios/InsiderNotificationService/NotificationService.swift`](ios/InsiderNotificationService/NotificationService.swift)
    - `appGroup` in [`ios/InsiderNotificationContent/NotificationViewController.swift`](ios/InsiderNotificationContent/NotificationViewController.swift)
+   - `com.apple.security.application-groups` in [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements), [`ios/InsiderNotificationService/InsiderNotificationService.entitlements`](ios/InsiderNotificationService/InsiderNotificationService.entitlements) and [`ios/InsiderNotificationContent/InsiderNotificationContent.entitlements`](ios/InsiderNotificationContent/InsiderNotificationContent.entitlements)
 
 2. **Signing & Capabilities** for every target (`Runner` + both extensions):
    - Set your bundle identifiers; the extension identifiers must be prefixed with the app identifier
@@ -159,7 +161,9 @@ applicationId "com.your.package.name"
 
 - **Firebase** — drop your `google-services.json` into `android/app`. The file is git-ignored.
 
-- **Huawei** — drop your `agconnect-services.json` into `android/app`. The file is git-ignored. The build applies the AppGallery Connect plugin, so the file is required even if you do not ship to Huawei devices; alternatively remove the `com.huawei.agconnect` lines from `android/build.gradle` and `android/app/build.gradle` and use the `-nh` (no Huawei) variant of `flutter_insider` from pub.dev.
+- **Huawei** — drop your `agconnect-services.json` into `android/app`. The file is git-ignored. The build applies the AppGallery Connect plugin, so the file is required even if you do not ship to Huawei devices; alternatively remove the `com.huawei.agconnect` lines from `android/build.gradle` and `android/app/build.gradle` and depend on the no-Huawei build of the plugin, published on pub.dev as the `+nh` version of each release (for example `flutter_insider: 5.5.0+nh`).
+
+- **Release signing** — `signingConfigs.release` points at `android/app/insider.jks`, which is not in the repository. Debug builds are unaffected, but a release build fails with `Keystore file '…/android/app/insider.jks' not found` until you point it at your own keystore and credentials.
 
 - Optionally change the app label in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml).
 
@@ -254,7 +258,7 @@ To work from Android Studio, open the project root with the Flutter plugin insta
 
 `flutter_insider` ships both a podspec and a `Package.swift`, so the plugin works with whichever dependency manager Flutter uses. Nothing in the Dart code changes.
 
-**Turning it on.** Swift Package Manager is on by default from Flutter 3.44. On Flutter 3.24–3.43, enable it once:
+**Turning it on.** Swift Package Manager is on by default from Flutter 3.44. On Flutter 3.38–3.43, enable it once:
 
 ```bash
 flutter config --enable-swift-package-manager
@@ -466,7 +470,7 @@ This ordering was verified on a simulator with `xcrun simctl push` payloads in t
 
 ### Android
 
-Two services listen for `com.google.firebase.MESSAGING_EVENT`: the Insider SDK's own `InsiderFirebaseMessagingService` and `firebase_messaging`'s `FlutterFirebaseMessagingService`. Android delivers each message to a single service, chosen from the merged manifest, so check `build/app/intermediates/merged_manifests/debug/AndroidManifest.xml` after the first build:
+Two services listen for `com.google.firebase.MESSAGING_EVENT`: the Insider SDK's own `InsiderFirebaseMessagingService` and `firebase_messaging`'s `FlutterFirebaseMessagingService`. Android delivers each message to a single service, chosen from the merged manifest, so check `build/app/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml` after the first debug build:
 
 - If `FlutterFirebaseMessagingService` wins, the Dart bridge above forwards Insider messages to the SDK and nothing else is needed.
 - If `InsiderFirebaseMessagingService` wins, Insider pushes are handled natively but the SDK drops every other message. Give Firebase's service precedence by re-declaring it in `android/app/src/main/AndroidManifest.xml` with a higher `android:priority` on its intent filter (`tools:node="merge"`), and let the bridge do the routing.
@@ -490,6 +494,8 @@ The demo declares them in [`android/app/src/main/AndroidManifest.xml`](android/a
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 ```
+
+> **Note:** `ACCESS_COARSE_LOCATION` is not declared in the demo's own manifest; it reaches the merged manifest through the Huawei location library that `flutter_insider` depends on. The `+nh` build of the plugin drops that library, and on Android 12 (API 31) and above an app that requests fine location must request coarse location too. Declare `ACCESS_COARSE_LOCATION` in your own manifest rather than relying on a dependency to add it.
 
 `registerWithQuietPermission(false)` in the initialization above triggers the push permission prompt. Location permissions must be requested by the app before calling `startTrackingGeofence()`; use a package such as `permission_handler` for that in your own app.
 
