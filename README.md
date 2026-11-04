@@ -15,19 +15,33 @@
 
 This project demonstrates how to integrate the [Insider Flutter SDK](https://academy.insiderone.com/docs/flutter-integration) into a Flutter application on **iOS** and **Android**. One Dart codebase drives both platforms; the `flutter_insider` plugin brings the native Insider SDKs with it. 
 
-- On iOS; the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**.
-- On Android; they come from the Insider Maven repository through Gradle. 
+- On iOS, the native SDKs can be resolved with **Swift Package Manager** or **CocoaPods**.
+- On Android, they come from the Insider Maven repository through Gradle. 
 
 The app includes working examples of every major SDK feature, the two iOS push notification extensions, and Firebase / Huawei push on Android.
+
+## Contents
+
+- [Requirements](#requirements)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Swift Package Manager (iOS)](#swift-package-manager-ios)
+- [SDK Initialization](#sdk-initialization)
+- [App Frames](#app-frames)
+- [Push Notifications](#push-notifications)
+- [Firebase Messaging alongside Insider](#firebase-messaging-alongside-insider)
+- [Runtime Permissions (Android)](#runtime-permissions-android)
+- [Public API Usage](#public-api-usage)
+- [License](#license)
 
 ## Requirements
 
 | Requirement | Minimum |
 |---|---|
-| Flutter | 3.24 (Swift Package Manager support) |
-| Dart | 3.0 |
-| iOS | 15.6, Xcode 15 |
-| Android | API 24 (Android 7.0), compile and target SDK 36 |
+| Flutter | 3.38 (UIScene app delegate, `FlutterImplicitEngineDelegate`) |
+| Dart | The version bundled with Flutter (`flutter_lints` 6 needs 3.8+) |
+| iOS | 15.6, Xcode 26.4 |
+| Android | API 24 (Android 7.0), compile SDK 36, target SDK from Flutter (`flutter.targetSdkVersion`) |
 | Android Gradle Plugin | 8.13 (Gradle 9.1) |
 | JDK | 17 |
 
@@ -40,17 +54,19 @@ lib/
 ├── firebase/
 │   └── insider_push_bridge.dart     # Routes Firebase messages to Insider or the app
 ├── components/                      # Shared widgets
+├── theme/                           # Colors and theme
 └── insider/                         # One page per SDK feature
     ├── user_attribute.dart, user_identifier.dart
     ├── event.dart, product.dart, purchase.dart, wishlist.dart
     ├── smart_recommender.dart, content_optimizer.dart
     ├── page_visit.dart, gdpr.dart, geofence.dart
     ├── in_app_messages.dart
-    └── app_cards.dart, app_cards_page.dart
+    ├── app_cards.dart, app_cards_page.dart
+    └── app_frames_page.dart         # InsiderAppFramesView per placement
 
 ios/
 ├── Podfile                          # Adds InsiderMobileAdvancedNotification to Runner in CocoaPods mode
-├── Runner/                          # AppDelegate, SceneDelegate, Info.plist, entitlements
+├── Runner/                          # AppDelegate, SceneDelegate, Info.plist (App Frames opt-in), entitlements
 ├── InsiderNotificationService/      # Rich push (Service Extension)
 │   └── NotificationService.swift
 └── InsiderNotificationContent/      # Interactive push (Content Extension)
@@ -65,7 +81,7 @@ android/
     ├── google-services.json         # Firebase (git-ignored, you provide it)
     ├── agconnect-services.json      # Huawei (git-ignored, you provide it)
     └── src/main/
-        ├── AndroidManifest.xml      # Permissions, launcher activity
+        ├── AndroidManifest.xml      # Permissions, launcher activity, App Frames opt-in
         └── kotlin/.../MainActivity.kt
 ```
 
@@ -92,7 +108,7 @@ Without this step the app still runs; Firebase is skipped with a `[FCM] Firebase
 
 ### 2. Configure Your App
 
-Every value you must replace is marked with a `FIXME-INSIDER` comment; search for that key to find them all.
+The values you must replace in Dart, Swift and Gradle sources are marked with a `FIXME-INSIDER` comment; search for that key to find them. The iOS URL scheme in `ios/Runner/Info.plist`, the App Group in the three `.entitlements` files and the bundle identifiers in the Xcode project carry no marker; they are covered in the iOS steps below.
 
 #### Dart (both platforms)
 
@@ -109,6 +125,7 @@ await FlutterInsider.Instance.init(
 1. **App Group** identifier in all of these files. It must be identical everywhere, and the App Groups capability must be enabled for all three bundle identifiers in your Apple Developer account:
    - `appGroup` in [`ios/InsiderNotificationService/NotificationService.swift`](ios/InsiderNotificationService/NotificationService.swift)
    - `appGroup` in [`ios/InsiderNotificationContent/NotificationViewController.swift`](ios/InsiderNotificationContent/NotificationViewController.swift)
+   - `com.apple.security.application-groups` in [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements), [`ios/InsiderNotificationService/InsiderNotificationService.entitlements`](ios/InsiderNotificationService/InsiderNotificationService.entitlements) and [`ios/InsiderNotificationContent/InsiderNotificationContent.entitlements`](ios/InsiderNotificationContent/InsiderNotificationContent.entitlements)
 
 2. **Signing & Capabilities** for every target (`Runner` + both extensions):
    - Set your bundle identifiers; the extension identifiers must be prefixed with the app identifier
@@ -144,7 +161,9 @@ applicationId "com.your.package.name"
 
 - **Firebase** — drop your `google-services.json` into `android/app`. The file is git-ignored.
 
-- **Huawei** — drop your `agconnect-services.json` into `android/app`. The file is git-ignored. The build applies the AppGallery Connect plugin, so the file is required even if you do not ship to Huawei devices; alternatively remove the `com.huawei.agconnect` lines from `android/build.gradle` and `android/app/build.gradle` and use the `-nh` (no Huawei) variant of `flutter_insider` from pub.dev.
+- **Huawei** — drop your `agconnect-services.json` into `android/app`. The file is git-ignored. The build applies the AppGallery Connect plugin, so the file is required even if you do not ship to Huawei devices; alternatively remove the `com.huawei.agconnect` lines from `android/build.gradle` and `android/app/build.gradle` and depend on the no-Huawei build of the plugin, published on pub.dev as the `+nh` version of each release (for example `flutter_insider: 5.5.0+nh`).
+
+- **Release signing** — `signingConfigs.release` points at `android/app/insider.jks`, which is not in the repository. Debug builds are unaffected, but a release build fails with `Keystore file '…/android/app/insider.jks' not found` until you point it at your own keystore and credentials.
 
 - Optionally change the app label in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml).
 
@@ -162,7 +181,7 @@ flutter config --enable-swift-package-manager
 flutter pub get
 ```
 
-Flutter generates a Swift package that depends on the `flutter_insider` package, which in turn resolves the native SDKs from [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK). `flutter build ios` still runs `pod install` for the remaining CocoaPods integration; that is expected.
+Flutter generates a Swift package that depends on the `flutter_insider` package, which in turn resolves the native SDKs from [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK). `flutter build ios` still runs `pod install` for the remaining CocoaPods integration; that is expected. See [Swift Package Manager](#swift-package-manager-ios) for what changes under this channel.
 
 </details>
 
@@ -200,7 +219,7 @@ end
 
 #### Android
 
-No extra steps: the Gradle wrapper downloads itself on first build and the `flutter_insider` plugin declares the native SDKs (`com.useinsider:insider`, `com.useinsider:insiderhybrid`, Firebase Messaging, Play Services Location, Huawei Push / Location). The Insider and Huawei Maven repositories are already declared in [`android/build.gradle`](android/build.gradle):
+No extra steps: the Gradle wrapper downloads itself on first build and the `flutter_insider` plugin declares the native SDKs (`com.useinsider:insider`, Firebase Messaging, Play Services Location, Huawei Push / Location). The Insider and Huawei Maven repositories are already declared in [`android/build.gradle`](android/build.gradle):
 
 ```groovy
 allprojects {
@@ -234,6 +253,28 @@ open ios/Runner.xcworkspace
 ```
 
 To work from Android Studio, open the project root with the Flutter plugin installed, or open the `android` folder for Gradle-only work.
+
+## Swift Package Manager (iOS)
+
+`flutter_insider` ships both a podspec and a `Package.swift`, so the plugin works with whichever dependency manager Flutter uses. Nothing in the Dart code changes.
+
+**Turning it on.** Swift Package Manager is on by default from Flutter 3.44. On Flutter 3.38–3.43, enable it once:
+
+```bash
+flutter config --enable-swift-package-manager
+flutter config --list | grep swift   # enable-swift-package-manager: true
+```
+
+**What changes.**
+
+- Flutter resolves the plugin's Swift package itself; the plugin needs no `pod install`. `pod install` still runs for any remaining CocoaPods dependencies.
+- The iOS deployment floor of the plugin is `12.0` under Swift Package Manager and `12.2` under CocoaPods. This demo targets `15.6`, above both.
+- The native Insider SDK version comes from a different place on each channel: CocoaPods installs the exact pods pinned in the plugin's podspec, while Swift Package Manager follows the [`Insider-iOS-SDK`](https://github.com/useinsider/Insider-iOS-SDK) package. The two can name different native versions between plugin releases.
+
+**Notification extensions.** Under Swift Package Manager the plugin's package embeds `InsiderMobileAdvancedNotification` in the app, and Xcode passes the package's framework search path to every target, so both extensions link it with a plain `import`. Two things need attention when you adopt it in your own app:
+
+- Do not also add the `InsiderMobileAdvancedNotification` pod under Swift Package Manager. If CocoaPods embeds the same framework, the build fails with `Multiple commands produce …InsiderMobileAdvancedNotification.framework`. This demo's [`ios/Podfile`](ios/Podfile) adds the pod only `unless swift_package_manager_enabled?`. When you upgrade an app that already builds with Swift Package Manager, remove the pod from the `Podfile` in the same change.
+- The content extension's `InsiderInterface.storyboard` is not exported by the Swift package, so nothing links it for you. Copy it into the content extension target, as this demo does with [`ios/InsiderNotificationContent/InsiderInterface.storyboard`](ios/InsiderNotificationContent/InsiderInterface.storyboard).
 
 ## SDK Initialization
 
@@ -271,16 +312,85 @@ Future initInsider() async {
 }
 ```
 
+## App Frames
+
+App Frames render a panel-managed campaign inside a slot of your own screen. Each slot is a **placement**: you choose its id in the app, define the same id in the Insider panel, and target campaigns at it. The demo's App Frames screen (Playground → mini-apps → **App Frames**) hosts one `InsiderAppFramesView` per placement you add, so any placement can be tried without code changes.
+
+### Enable the feature
+
+App Frames are an opt-in on both platforms. Without the flag the view reports `disabled` and renders nothing.
+
+Android, inside `<application>` in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml):
+
+```xml
+<meta-data
+    android:name="com.useinsider.insider.APP_FRAMES_ENABLED"
+    android:value="true" />
+```
+
+iOS, in the top-level `Insider` dictionary of [`ios/Runner/Info.plist`](ios/Runner/Info.plist):
+
+```xml
+<key>Insider</key>
+<dict>
+    <key>App Frames Enabled</key>
+    <true/>
+</dict>
+```
+
+### Use the view
+
+```dart
+import 'package:flutter_insider/flutter_insider.dart';
+
+InsiderAppFramesView(
+  placementId: 'home_page',
+  onStatusChanged: (status, previousStatus) {
+    // resolving → downloading → rendering → ready
+    debugPrint('App Frames: ${status.name}');
+  },
+  onLoadFailed: (error) {
+    debugPrint('App Frames failed: ${error.code.name}: ${error.message}');
+  },
+)
+```
+
+The view sizes itself from the template's reported height and collapses when there is nothing to show. Mounting it subscribes the placement; removing it from the tree unsubscribes.
+
+### Try it in the demo
+
+1. Create a placement in the panel and an active App Frames campaign that targets it.
+2. Open **App Frames**, type the placement id and tap **+ Add Placement**.
+3. Watch the card's status chip: it shows the latest `InsiderAppFramesViewStatus` (`resolving`, `downloading`, `rendering`, `ready`, `unavailable`, `disabled`, …). On a load failure it shows the error as `<code>: <message>` instead.
+4. **Detach** removes the view from the card; **Attach** mounts a fresh one; **Delete** removes the placement.
+
 ## Push Notifications
 
-### iOS: Notification Extensions
+### iOS: Rich Push (Notification Extensions)
 
-The SDK requires two notification extensions on iOS for full push notification support:
+Rich push covers image and video attachments and interactive carousel notifications. The SDK requires two notification extensions on iOS for full support:
 
 - **Notification Service Extension** — Intercepts incoming push notifications to download rich media (images, videos) before display. See [`ios/InsiderNotificationService/NotificationService.swift`](ios/InsiderNotificationService/NotificationService.swift).
 - **Notification Content Extension** — Provides an interactive carousel UI for expanded push notifications. See [`ios/InsiderNotificationContent/NotificationViewController.swift`](ios/InsiderNotificationContent/NotificationViewController.swift).
 
-Both extensions must share the same **App Group** identifier as the main app target. Refer to the source files for the complete implementation.
+Both extensions must share the same **App Group** identifier as the main app target, and the same value must be passed as the second argument of `FlutterInsider.Instance.init`. Replace the `appGroup` constant marked `FIXME-INSIDER` in both extension sources with your own. Refer to the source files for the complete implementation.
+
+The service extension handles only payloads that carry `"source": "Insider"` and leaves room for other providers in its `else` branch. The texts of the carousel controls are set there and can be customised:
+
+```swift
+InsiderPushNotification.showInsiderRichPush(
+    bestAttemptContent,
+    appGroup: appGroup,
+    nextButtonText: ">>",
+    goToAppText: "Launch App",
+    success: { attachment in
+        if let attachment { bestAttemptContent.attachments = [attachment] }
+        contentHandler(bestAttemptContent)
+    }
+)
+```
+
+How the extensions link `InsiderMobileAdvancedNotification` depends on the dependency manager; see [Swift Package Manager](#swift-package-manager-ios).
 
 The Notification Content Extension's `Info.plist` must include the following entries:
 
@@ -311,7 +421,7 @@ The storyboard references `NotificationViewController` without a module. The Swi
 
 ### Android: Firebase and Huawei
 
-No messaging service code is needed in the app. The `flutter_insider` plugin depends on Firebase Cloud Messaging and Huawei Push and hands Insider messages to the SDK itself; you only supply the configuration files:
+Rich push needs no extra setup on Android: the Insider SDK builds the notification, including image and carousel content, itself. No messaging service code is needed in the app. The `flutter_insider` plugin depends on Firebase Cloud Messaging and Huawei Push and hands Insider messages to the SDK itself; you only supply the configuration files:
 
 - `android/app/google-services.json` — read by the Google Services plugin at build time.
 - `android/app/agconnect-services.json` — read by the AppGallery Connect plugin at build time.
@@ -360,7 +470,7 @@ This ordering was verified on a simulator with `xcrun simctl push` payloads in t
 
 ### Android
 
-Two services listen for `com.google.firebase.MESSAGING_EVENT`: the Insider SDK's own `InsiderFirebaseMessagingService` and `firebase_messaging`'s `FlutterFirebaseMessagingService`. Android delivers each message to a single service, chosen from the merged manifest, so check `build/app/intermediates/merged_manifests/debug/AndroidManifest.xml` after the first build:
+Two services listen for `com.google.firebase.MESSAGING_EVENT`: the Insider SDK's own `InsiderFirebaseMessagingService` and `firebase_messaging`'s `FlutterFirebaseMessagingService`. Android delivers each message to a single service, chosen from the merged manifest, so check `build/app/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml` after the first debug build:
 
 - If `FlutterFirebaseMessagingService` wins, the Dart bridge above forwards Insider messages to the SDK and nothing else is needed.
 - If `InsiderFirebaseMessagingService` wins, Insider pushes are handled natively but the SDK drops every other message. Give Firebase's service precedence by re-declaring it in `android/app/src/main/AndroidManifest.xml` with a higher `android:priority` on its intent filter (`tools:node="merge"`), and let the bridge do the routing.
@@ -385,7 +495,389 @@ The demo declares them in [`android/app/src/main/AndroidManifest.xml`](android/a
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 ```
 
+> **Note:** `ACCESS_COARSE_LOCATION` is not declared in the demo's own manifest; it reaches the merged manifest through the Huawei location library that `flutter_insider` depends on. The `+nh` build of the plugin drops that library, and on Android 12 (API 31) and above an app that requests fine location must request coarse location too. Declare `ACCESS_COARSE_LOCATION` in your own manifest rather than relying on a dependency to add it.
+
 `registerWithQuietPermission(false)` in the initialization above triggers the push permission prompt. Location permissions must be requested by the app before calling `startTrackingGeofence()`; use a package such as `permission_handler` for that in your own app.
+
+## Public API Usage
+
+Every public call of `flutter_insider` 5.5.0, grouped by area. All calls go through the `FlutterInsider.Instance` singleton unless noted. Values in the snippets are examples.
+
+```dart
+import 'package:flutter_insider/flutter_insider.dart';
+import 'package:flutter_insider/enum/ContentOptimizerDataType.dart';
+import 'package:flutter_insider/enum/InsiderCallbackAction.dart';
+import 'package:flutter_insider/enum/InsiderGender.dart';
+import 'package:flutter_insider/src/identifiers.dart'; // FlutterInsiderIdentifiers is not re-exported
+
+final insider = FlutterInsider.Instance;
+```
+
+### Initialization
+
+```dart
+// partnerName, appGroup (iOS), callback(type, data); appIdentifier is optional.
+await insider.init('your_partner_name', 'group.com.example.app',
+    (int type, dynamic data) {
+  if (type == InsiderCallbackAction.NOTIFICATION_OPEN) { /* push opened */ }
+}, appIdentifier: 'com.example.app');
+
+// Same, against a custom endpoint.
+await insider.initWithCustomEndpoint('your_partner_name',
+    'group.com.example.app', 'https://custom.endpoint.example', (type, data) {});
+
+// Switch to another partner at runtime.
+await insider.reinitWithPartnerName('another_partner');
+```
+
+Callback types (`InsiderCallbackAction`): `NOTIFICATION_OPEN`, `INAPP_BUTTON_CLICK`, `TEMP_STORE_PURCHASE`, `TEMP_STORE_ADDED_TO_CART`, `TEMP_STORE_CUSTOM_ACTION`, `INAPP_SEEN`, `SESSION_STARTED`.
+
+`initFlutterBase` and `registerEventChannel` are public only because `init` uses them; call `init` / `initWithCustomEndpoint` instead.
+
+### Insider ID
+
+```dart
+final String? insiderID = await insider.getInsiderID();
+await insider.registerInsiderIDListener((insiderID) => print(insiderID));
+```
+
+### User attributes
+
+`getCurrentUser()` returns a `FlutterInsiderUser`; every setter returns the user, so calls chain.
+
+```dart
+final user = insider.getCurrentUser()!;
+
+user
+  ..setName('Jane')
+  ..setSurname('Doe')
+  ..setEmail('jane@example.com')
+  ..setPhoneNumber('+905551112233')
+  ..setAge(30)
+  ..setGender(InsiderGender.FEMALE) // MALE, FEMALE, OTHER
+  ..setBirthday(DateTime(1995, 4, 12))
+  ..setLanguage('en')
+  ..setLocale('en_US')
+  ..setFacebookID('fb-123')
+  ..setTwitterID('tw-123');
+
+// Opt-ins
+user
+  ..setEmailOptin(true)
+  ..setSMSOptin(true)
+  ..setPushOptin(true)
+  ..setLocationOptin(true)
+  ..setWhatsappOptin(false)
+  ..setPromotionalOptin(true);
+
+// Custom attributes
+user
+  ..setCustomAttributeWithString('membership', 'gold')
+  ..setCustomAttributeWithInt('visits', 12)
+  ..setCustomAttributeWithDouble('score', 4.5)
+  ..setCustomAttributeWithBoolean('vip', true)
+  ..setCustomAttributeWithDate('last_order', DateTime.now())
+  ..setCustomAttributeWithArray('interests', ['shoes', 'bags'])
+  ..unsetCustomAttribute('membership');
+
+// Object-array custom attributes
+user
+  ..addObjectsToCustomAttribute('addresses', [
+    {'id': 'home', 'city': 'Istanbul'},
+  ])
+  ..mergeObjectsInCustomAttribute(
+      'addresses', {'id': 'home'}, {'city': 'Ankara'})
+  ..removeObjectsFromCustomAttribute('addresses', {'id': 'home'})
+  ..removeObjectsFromCustomAttribute('addresses'); // omitting the match clears the whole attribute
+```
+
+### Login and logout
+
+```dart
+final identifiers = FlutterInsiderIdentifiers()
+  ..addEmail('jane@example.com')
+  ..addPhoneNumber('+905551112233')
+  ..addUserID('user-42')
+  ..addCustomIdentifier('loyalty_id', 'L-9');
+final Map? raw = identifiers.getIdentifiers();
+
+user.login(identifiers, insiderIDResult: (id) => print(id));
+final String? idAfterLogin = await user.loginAsync(identifiers,
+    timeout: const Duration(seconds: 10));
+
+await user.logout();
+
+user.logoutResettingInsiderID([identifiers], insiderIDResult: (id) {});
+final String? idAfterReset = await user.logoutResettingInsiderIDAsync(null,
+    timeout: const Duration(seconds: 10));
+```
+
+### Events
+
+`tagEvent` returns a `FlutterInsiderEvent`; add parameters, then `build()` sends it.
+
+```dart
+await insider
+    .tagEvent('video_watched')
+    .addParameterWithString('title', 'Trailer')
+    .addParameterWithInt('seconds', 42)
+    .addParameterWithDouble('progress', 0.7)
+    .addParameterWithBoolean('completed', false)
+    .addParameterWithDate('watched_at', DateTime.now())
+    .addParameterWithStringArray('tags', ['action', 'new'])
+    .addParameterWithArray('genres', ['drama'])
+    .addParameterWithNumericArray('ratings', [4, 4.5])
+    .addParameterWithObjectArray('items', [
+      {'id': 'p1', 'qty': 2},
+    ])
+    .build();
+
+await insider.signUpConfirmation(customParameters: {'source': 'demo'});
+```
+
+### Products
+
+`createNewProduct(productID, name, taxonomy, imageURL, price, currency)` returns a `FlutterInsiderProduct`; every setter returns the product.
+
+```dart
+final product = insider.createNewProduct('sku-1', 'Sneaker',
+    ['Shoes', 'Running'], 'https://example.com/sneaker.png', 99.9, 'USD')
+  ..setColor('red')
+  ..setSize('42')
+  ..setBrand('Acme')
+  ..setGender('unisex')
+  ..setDescription('Lightweight running shoe')
+  ..setSku('ACME-42-RED')
+  ..setGtin('0123456789012')
+  ..setGroupCode('SNEAKER')
+  ..setMultipack('1')
+  ..setProductType('footwear')
+  ..setProductURL('https://example.com/p/sku-1')
+  ..setTags(['summer', 'sale'])
+  ..setInStock(true)
+  ..setStock(10)
+  ..setQuantity(1)
+  ..setSalePrice(79.9)
+  ..setShippingCost(4.99)
+  ..setVoucherName('WELCOME')
+  ..setVoucherDiscount(10)
+  ..setPromotionName('Summer')
+  ..setPromotionDiscount(5)
+  ..setCustomAttributeWithString('material', 'mesh')
+  ..setCustomAttributeWithInt('weight_g', 240)
+  ..setCustomAttributeWithDouble('rating', 4.6)
+  ..setCustomAttributeWithBoolean('eco', true)
+  ..setCustomAttributeWithDate('released', DateTime(2026, 3, 1))
+  ..setCustomAttributeWithArray('fits', ['wide'])
+  ..setCustomAttributeWithStringArray('colors', ['red', 'black'])
+  ..setCustomAttributeWithNumericArray('sizes', [41, 42, 43]);
+
+// Read-only helpers on the product
+final bool sendable = product.hasSendablePrice;
+final Map<String, dynamic> required = product.productMustMap;
+final Map<String, dynamic> optional = product.productOptMap;
+```
+
+### Page visits
+
+Every page-visit call takes optional `customParameters`.
+
+```dart
+await insider.visitHomePage(customParameters: {'campaign': 'spring'});
+await insider.visitListingPage(['Shoes', 'Running']);
+await insider.visitProductDetailPage(product);
+await insider.visitCartPage([product], saleID: 'sale-1');
+await insider.visitWishlistPage([product]);
+```
+
+### Cart, purchase and wishlist
+
+```dart
+await insider.itemAddedToCart(product);
+await insider.itemRemovedFromCart('sku-1', saleID: 'sale-1');
+await insider.cartCleared();
+await insider.itemPurchased('unique-sale-id', product,
+    customParameters: {'payment': 'card'});
+
+await insider.itemAddedToWishlist(product);
+await insider.itemRemovedFromWishlist('sku-1');
+await insider.wishlistCleared();
+```
+
+### Smart recommendations
+
+```dart
+final Map? recs = await insider.getSmartRecommendation(1, 'en_US', 'USD');
+final Map? similar =
+    await insider.getSmartRecommendationWithProduct(product, 1, 'en_US');
+final Map? byIDs = await insider.getSmartRecommendationWithProductIDs(
+    ['sku-1', 'sku-2'], 1, 'en_US', 'USD');
+await insider.clickSmartRecommendationProduct(1, product);
+```
+
+### Content optimizer
+
+`dataType` is `ContentOptimizerDataType.CONTENT` or `ContentOptimizerDataType.ELEMENT`.
+
+```dart
+final String? title = await insider.getContentStringWithName(
+    'home_title', 'Welcome', ContentOptimizerDataType.CONTENT);
+final int? columns = await insider.getContentIntWithName(
+    'grid_columns', 2, ContentOptimizerDataType.ELEMENT);
+final bool? showBanner = await insider.getContentBoolWithName(
+    'show_banner', false, ContentOptimizerDataType.ELEMENT);
+
+// Bypass the SDK cache
+await insider.getContentStringWithoutCache(
+    'home_title', 'Welcome', ContentOptimizerDataType.CONTENT);
+await insider.getContentIntWithoutCache(
+    'grid_columns', 2, ContentOptimizerDataType.ELEMENT);
+await insider.getContentBoolWithoutCache(
+    'show_banner', false, ContentOptimizerDataType.ELEMENT);
+
+await insider.markContentOptimizerAsSeen('home_title');
+```
+
+### Push notifications
+
+```dart
+await insider.registerWithQuietPermission(false); // false: show the prompt
+await insider.setActiveForegroundPushView();      // iOS: show pushes in foreground
+await insider.setForegroundPushCallback((Map<String, dynamic> push) {});
+await insider.setPushToken('fcm-or-apns-token');
+await insider.handleNotification({'data': {'source': 'Insider'}});
+await insider.triggerPushProcessWithNotificationData({'source': 'Insider'});
+```
+
+### In-app messages, links and internal browser
+
+```dart
+await insider.disableInAppMessages();
+await insider.enableInAppMessages();
+await insider.removeInapp();
+
+await insider.handleUniversalLink('https://example.com/promo');
+
+// LEFT, RIGHT or NONE
+await insider.setInternalBrowserCloseButtonPosition(
+    insider.closeButtonPosition.RIGHT);
+```
+
+### Message center
+
+```dart
+final List? messages = await insider.getMessageCenterData(
+    DateTime.now().subtract(const Duration(days: 30)), DateTime.now(), 20);
+final List? userMessages = await insider.getMessageCenterDataWithIdentifiers(
+    DateTime.now().subtract(const Duration(days: 30)), DateTime.now(),
+    identifiers, 20);
+```
+
+### App Cards
+
+`appCards` returns a `FlutterInsiderAppCards`. Calls that fail with a recoverable platform error throw an `InsiderAppCardsException` whose `error` carries an `InsiderAppCardsErrorCode` (`unknown`, `sdkNotInitialized`, `invalidParameter`, `networkError`, `serverError`, `parseError`) and a `message`.
+
+```dart
+final appCards = insider.appCards;
+
+try {
+  final InsiderAppCardCampaignsResponse? response =
+      await appCards.getCampaigns();
+  final List<InsiderAppCard> cards = response?.appCards ?? [];
+  final InsiderAppCard card = cards.first;
+  // card.id, card.type (InsiderAppCardType.MESSAGE / IMAGE), card.isRead,
+  // card.content?.title, card.images, card.buttons, card.action, card.categories
+
+  // By id list on the manager…
+  await appCards.markAsRead([card.id]);
+  await appCards.markAsUnread([card.id]);
+  await appCards.view(card);
+  await appCards.click(card);
+  await appCards.clickButton(card.buttons!.first);
+  await appCards.delete([card.id]);
+
+  // …or on the card and button themselves.
+  await card.markAsRead();
+  await card.markAsUnread();
+  await card.view();
+  await card.click();
+  await card.buttons!.first.click();
+  await card.delete();
+
+  // Actions: InsiderAppCardDeeplinkAction (url, deeplinkType, json,
+  // keysAndValues), InsiderAppCardOpenSettingsAction, InsiderAppCardFeedbackAction.
+  final action = card.action;
+  if (action is InsiderAppCardDeeplinkAction) {
+    print('${action.deeplinkType}: ${action.url}');
+    // deeplinkType: InsiderAppCardDeeplinkType.URL_SCHEME / INTERNAL / EXTERNAL / UNKNOWN
+  }
+} on InsiderAppCardsException catch (e) {
+  print('${e.error.code}: ${e.error.message}');
+}
+```
+
+Every App Card model also has `toMap()` and a static `fromMap(...)` for serialisation.
+
+### App Frames
+
+See [App Frames](#app-frames) for setup. The full widget surface:
+
+```dart
+InsiderAppFramesView(
+  placementId: 'home_page',
+  height: null,                 // fixed height; null sizes from the template
+  collapseOnDismiss: true,      // collapse to zero height on dismiss
+  gestureRecognizers: null,     // defaults to taps only
+  onStatusChanged: (status, previousStatus) {
+    if (status.isLoading) { /* resolving, downloading, rendering */ }
+    if (status.isError) { /* errorResolving, errorDownloading, errorRendering */ }
+  },
+  onLoadFailed: (InsiderAppFramesError error) {
+    // error.code (InsiderAppFramesErrorCode), error.message,
+    // error.dismissCode, error.cause
+  },
+  onHeightChanged: (double height) {},
+  onDismissRequested: () {},
+  onActionTriggered: (Map<String, dynamic> actionData) {},
+)
+```
+
+`InsiderAppFramesViewStatus`: `detached`, `noPlacement`, `disabled`, `resolving`, `downloading`, `rendering`, `unavailable`, `ready`, `dismissed`, `errorResolving`, `errorDownloading`, `errorRendering`, `unknown`.
+`InsiderAppFramesErrorCode`: `unknown`, `resolutionFailed`, `responseMalformed`, `downloadingFailed`, `placementUntrusted`, `contentDisplayFailed`, `renderingFailed`.
+
+### Event listener
+
+`events` returns a `FlutterInsiderEvents` that reports every event the SDK records.
+
+```dart
+final InsiderEventSubscription subscription =
+    await insider.events.addObserver((InsiderRecordedEvent event) {
+  print('${event.name} ${event.parameters} at ${event.recordedAt}');
+});
+
+if (!subscription.isCancelled) {
+  await subscription.cancel();
+}
+```
+
+### Privacy, consent and data collection
+
+```dart
+await insider.setGDPRConsent(true);
+await insider.setMobileAppAccess(true);
+
+await insider.enableIDFACollection(true);     // iOS
+await insider.enableIpCollection(true);
+await insider.enableCarrierCollection(true);
+await insider.enableLocationCollection(true);
+```
+
+### Geofencing
+
+```dart
+await insider.startTrackingGeofence();
+await insider.setAllowsBackgroundLocationUpdates(true);
+```
 
 ## License
 
