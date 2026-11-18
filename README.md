@@ -304,7 +304,6 @@ Future initInsider() async {
   FlutterInsider.Instance.setActiveForegroundPushView();
   // Request the push permission (iOS prompt / Android 13+ POST_NOTIFICATIONS)
   FlutterInsider.Instance.registerWithQuietPermission(false);
-  FlutterInsider.Instance.enableIDFACollection(true);
   FlutterInsider.Instance.enableIpCollection(true);
   FlutterInsider.Instance.enableCarrierCollection(true);
   FlutterInsider.Instance.enableLocationCollection(true);
@@ -866,7 +865,6 @@ if (!subscription.isCancelled) {
 await insider.setGDPRConsent(true);
 await insider.setMobileAppAccess(true);
 
-await insider.enableIDFACollection(true);     // iOS
 await insider.enableIpCollection(true);
 await insider.enableCarrierCollection(true);
 await insider.enableLocationCollection(true);

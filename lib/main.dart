@@ -57,7 +57,6 @@ class InsiderDemo extends StatelessWidget {
     FlutterInsider.Instance.setActiveForegroundPushView();
     FlutterInsider.Instance.registerWithQuietPermission(false);
     logFcmToken();
-    FlutterInsider.Instance.enableIDFACollection(true);
     FlutterInsider.Instance.enableIpCollection(true);
     FlutterInsider.Instance.enableCarrierCollection(true);
     FlutterInsider.Instance.enableLocationCollection(true);
