@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_insider/flutter_insider.dart';
 
 import 'package:flutter_demo/components/insider_card.dart';
 import 'package:flutter_demo/theme/insider_colors.dart';
@@ -15,9 +16,8 @@ import 'package:flutter_demo/theme/insider_theme.dart';
 /// under `GDPR True` / `GDPR False`; there is no mobile-access control and no
 /// consent summary line anywhere in this demo.
 ///
-/// The frame itself is a placeholder: flutter_insider exposes no App Frames API
-/// — there is no Flutter counterpart to Android's `InsiderAppFramesView` — so
-/// each placement card carries one in its place. See [_AppFramePlaceholder].
+/// Each attached placement card hosts an [InsiderAppFramesView]; its status chip
+/// shows the latest [InsiderAppFramesViewStatus], or the load error.
 class AppFramesPage extends StatefulWidget {
   const AppFramesPage({super.key});
 
@@ -34,6 +34,10 @@ class _AppFramesPageState extends State<AppFramesPage> {
   /// Per-placement attach state and status label, keyed by placement id.
   final Map<String, bool> _attached = <String, bool>{};
   final Map<String, String> _status = <String, String>{};
+  final Map<String, InsiderAppFramesViewStatus> _frameStatus =
+      <String, InsiderAppFramesViewStatus>{};
+  final Map<String, InsiderAppFramesError> _frameError =
+      <String, InsiderAppFramesError>{};
 
   @override
   void dispose() {
@@ -60,6 +64,8 @@ class _AppFramesPageState extends State<AppFramesPage> {
       _placements.remove(placementId);
       _attached.remove(placementId);
       _status.remove(placementId);
+      _frameStatus.remove(placementId);
+      _frameError.remove(placementId);
     });
   }
 
@@ -68,7 +74,33 @@ class _AppFramesPageState extends State<AppFramesPage> {
       final bool nowAttached = !(_attached[placementId] ?? false);
       _attached[placementId] = nowAttached;
       _status[placementId] = nowAttached ? 'Attached' : 'Detached';
+      _frameStatus.remove(placementId);
+      _frameError.remove(placementId);
     });
+  }
+
+  void _onFrameStatusChanged(
+    String placementId,
+    InsiderAppFramesViewStatus status,
+  ) {
+    if (_attached[placementId] != true) return;
+    setState(() {
+      _frameStatus[placementId] = status;
+      if (!status.isError) _frameError.remove(placementId);
+    });
+  }
+
+  void _onFrameLoadFailed(String placementId, InsiderAppFramesError error) {
+    if (_attached[placementId] != true) return;
+    setState(() => _frameError[placementId] = error);
+  }
+
+  String _chipLabel(String placementId) {
+    final InsiderAppFramesError? error = _frameError[placementId];
+    if (error != null) return '${error.code.name}: ${error.message}';
+    final InsiderAppFramesViewStatus? status = _frameStatus[placementId];
+    if (status != null) return status.name;
+    return _status[placementId] ?? 'Idle';
   }
 
   @override
@@ -100,10 +132,16 @@ class _AppFramesPageState extends State<AppFramesPage> {
 
             for (final String placementId in _placements)
               _PlacementCard(
+                key: ValueKey<String>(placementId),
                 placementId: placementId,
                 attached: _attached[placementId] ?? false,
-                status: _status[placementId] ?? 'Idle',
+                status: _chipLabel(placementId),
                 onToggleAttached: () => _toggleAttached(placementId),
+                onStatusChanged: (InsiderAppFramesViewStatus status,
+                        InsiderAppFramesViewStatus _) =>
+                    _onFrameStatusChanged(placementId, status),
+                onLoadFailed: (InsiderAppFramesError error) =>
+                    _onFrameLoadFailed(placementId, error),
                 onDelete: () => _deletePlacement(placementId),
               ),
           ],
@@ -122,13 +160,19 @@ class _PlacementCard extends StatelessWidget {
   final String status;
   final VoidCallback onToggleAttached;
   final VoidCallback onDelete;
+  final void Function(InsiderAppFramesViewStatus, InsiderAppFramesViewStatus)
+      onStatusChanged;
+  final ValueChanged<InsiderAppFramesError> onLoadFailed;
 
   const _PlacementCard({
+    super.key,
     required this.placementId,
     required this.attached,
     required this.status,
     required this.onToggleAttached,
     required this.onDelete,
+    required this.onStatusChanged,
+    required this.onLoadFailed,
   });
 
   @override
@@ -162,7 +206,13 @@ class _PlacementCard extends StatelessWidget {
               ],
             ),
           ),
-          const _AppFramePlaceholder(),
+          if (attached)
+            InsiderAppFramesView(
+              key: ValueKey<String>(placementId),
+              placementId: placementId,
+              onStatusChanged: onStatusChanged,
+              onLoadFailed: onLoadFailed,
+            ),
           const Padding(
             padding: EdgeInsets.only(top: 12),
             child: Divider(),
@@ -172,36 +222,6 @@ class _PlacementCard extends StatelessWidget {
             child: _StatusChip(label: status),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Stands in for the frame the native demos render here.
-///
-/// TODO(MOB-26643): replace with the real App Frames view once flutter_insider
-/// exposes one — the plugin has no App Frames API today, so there is nothing to
-/// attach a placement to on Flutter.
-class _AppFramePlaceholder extends StatelessWidget {
-  const _AppFramePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 22),
-      decoration: BoxDecoration(
-        color: InsiderColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(InsiderTheme.controlRadius),
-        border: Border.all(
-          color: InsiderColors.outline,
-          width: InsiderTheme.strokeWidth,
-        ),
-      ),
-      child: Text(
-        'App Frames view — not available on Flutter yet',
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall,
       ),
     );
   }
@@ -239,12 +259,16 @@ class _StatusChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 9),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: InsiderColors.onSurface,
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: InsiderColors.onSurface,
+                ),
               ),
             ),
           ],
